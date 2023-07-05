@@ -7,18 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "qas")
+@Table(name = "images")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class QA {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String question;
-    private String answer;
-    @ManyToOne
-    @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
-    private Anamnesis anamnesis;
+    private String link;
+    @OneToOne(mappedBy = "image")
+    private Diagnosis diagnosis;
 }

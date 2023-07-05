@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,6 +24,6 @@ public class User {
     private String firstName;
     @Column(name = "last_name", length = 30)
     private String lastname;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Dog> dogs;
 }

@@ -7,13 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
+@Table(name = "dogs")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Dog {
+public abstract class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,6 +26,8 @@ public class Dog {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User owner;
+    @OneToMany(mappedBy = "dog", fetch = FetchType.EAGER)
+    private List<Diagnosis> diagnoses;
 }

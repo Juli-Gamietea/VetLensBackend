@@ -1,4 +1,12 @@
 package com.api.vetlens.entity;
 
-public class Default {
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
+
+@AllArgsConstructor
+@NoArgsConstructor
+public class Default extends User{
 }
+
