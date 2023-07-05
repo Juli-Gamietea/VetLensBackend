@@ -1,5 +1,6 @@
 package com.api.vetlens.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,8 @@ public class User {
     private String firstName;
     @Column(name = "last_name", length = 30)
     private String lastname;
+    @Column(name = "licence_number", length = 40)
+    private String licenceNumber;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Dog> dogs;
 }
