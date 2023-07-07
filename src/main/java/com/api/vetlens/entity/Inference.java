@@ -21,6 +21,6 @@ public class Inference {
     private Disease disease;
     private Float probability;
     @ManyToOne
-    @JoinColumn(name = "anamnesis_id",referencedColumnName = "id")
+    @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
     private Anamnesis anamnesis;
 }

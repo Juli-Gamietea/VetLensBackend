@@ -1,15 +1,15 @@
 package com.api.vetlens.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@AllArgsConstructor
+@Data
+@Builder
 @NoArgsConstructor
-@Getter
-@Setter
-public class LoginRequestDTO {
+@AllArgsConstructor
+public class AuthenticationRequestDTO {
     private String username;
     private String password;
 }
