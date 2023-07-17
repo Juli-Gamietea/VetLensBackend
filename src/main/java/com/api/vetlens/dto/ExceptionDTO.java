@@ -11,6 +11,4 @@ import lombok.Setter;
 @Setter
 public class ExceptionDTO {
     private String message;
-    private String className;
-    private Integer status;
 }
