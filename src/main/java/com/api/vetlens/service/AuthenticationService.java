@@ -19,6 +19,7 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
@@ -32,6 +33,7 @@ public class AuthenticationService {
                 .build();
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
+        userService.sendEmailNewAccount(request.getEmail(), request.getPassword(), request.getUsername());
         return AuthenticationResponseDTO.builder()
                 .token(jwtToken)
                 .build();

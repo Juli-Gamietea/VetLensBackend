@@ -25,4 +25,9 @@ public class UserController {
     public ResponseEntity<MessageDTO> changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
         return ResponseEntity.ok(userService.changePassword(username, oldPassword, newPassword));
     }
+
+    @PutMapping("/password/restore/{username}")
+    public ResponseEntity<MessageDTO> forgotPassword(@PathVariable String username) {
+        return ResponseEntity.ok(userService.forgotPassword(username));
+    }
 }
