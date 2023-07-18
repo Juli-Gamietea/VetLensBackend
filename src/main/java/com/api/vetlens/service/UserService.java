@@ -1,12 +1,11 @@
 package com.api.vetlens.service;
 
-import com.api.vetlens.dto.MessageDTO;
-import com.api.vetlens.dto.UserRequestDTO;
-import com.api.vetlens.dto.UserResponseDTO;
+import com.api.vetlens.dto.*;
+import com.api.vetlens.entity.Dog;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;
-import com.api.vetlens.exceptions.EmailNotSendException;
 import com.api.vetlens.exceptions.UserNotFoundException;
+import com.api.vetlens.repository.DogRepository;
 import com.api.vetlens.repository.UserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +13,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final DogRepository dogRepository;
     private final PasswordEncoder passwordEncoder;
     private final Faker faker;
     private final EmailService emailService;
@@ -71,11 +73,36 @@ public class UserService {
         return new MessageDTO("Se ha enviado un mail con una nueva contraseña");
     }
 
+    public DogResponseDTO addDog(DogRequestDTO request) {
+        Optional<User> userOptional = userRepository.findByUsername(request.getOwnerUsername());
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Usuario " + request.getOwnerUsername() + " no encontrado");
+        }
+        User user = userOptional.get();
+        Dog dog = new Dog();
+        dog.setDogBreed(request.getDogBreed());
+        dog.setName(request.getName());
+        dog.setOwner(user);
+        dog.setDateOfBirth(request.getDateOfBirth());
+        return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
+    }
+
+    public List<DogResponseDTO> getAllDogs(String username){
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("Usuario " + username + " no encontrado");
+        }
+        List<Dog> dogs = dogRepository.findAllByOwner(userOptional.get());
+        return dogs.stream().map(
+                dog -> mapper.map(dog, DogResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+
     public void sendEmailNewAccount(String email, String password, String user) {
         emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
                 "<html>" +
                 "<body>" +
-                "   <div style='font-family:garamond'>" +
+                "   <div style='font-family:sans-serif'>" +
                 "   <h1>¡Bienvenido a VetLens!</h1>" +
                 "   <h2>Su cuenta ha sido creada con exito</h2>" +
                 "<h3>" +
@@ -105,7 +132,7 @@ public class UserService {
                 " <html>" +
 
                 "<body>" +
-                "<div style='font-family:garamond;'>" +
+                "<div style='font-family:sans-serif;'>" +
                 "<h1>VetLens</h1>" +
                 "<h2>Su contraseña ha sido modificada</h2>" +
                 "<h3>" +
@@ -113,7 +140,7 @@ public class UserService {
                 "</h3>" +
                 "<ul>" +
                 "<li>" +
-                "<h3><u>Contraseña</u>:" + password + "</h3>" +
+                "<h3><u>Contraseña</u>: " + password + "</h3>" +
                 "</li>" +
                 "</ul>" +
                 "<p>" +

@@ -5,6 +5,7 @@ import com.api.vetlens.dto.AuthenticationResponseDTO;
 import com.api.vetlens.dto.RegisterRequestDTO;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;
+import com.api.vetlens.exceptions.UserAlreadyExistsException;
 import com.api.vetlens.repository.UserRepository;
 import com.api.vetlens.security.config.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+        Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
+        if(userOptional.isPresent()){
+            throw new UserAlreadyExistsException("El nombre de usuario " + request.getUsername() + " se encuentra en uso");
+        }
         var user = User.builder()
                 .firstName(request.getFirstname())
                 .lastname(request.getLastname())
@@ -39,7 +46,7 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponseDTO authenticate(AuthenticationRequestDTO request) {
+    public AuthenticationResponseDTO login(AuthenticationRequestDTO request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername()).orElseThrow();
         var jwtToken = jwtService.generateToken(user);

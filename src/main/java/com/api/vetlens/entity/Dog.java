@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public abstract class Dog {
+public class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
