@@ -7,7 +7,7 @@ import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;
 import com.api.vetlens.exceptions.UserAlreadyExistsException;
 import com.api.vetlens.repository.UserRepository;
-import com.api.vetlens.security.config.JwtService;
+import com.api.vetlens.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

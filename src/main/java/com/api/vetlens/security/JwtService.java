@@ -1,4 +1,4 @@
-package com.api.vetlens.security.config;
+package com.api.vetlens.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

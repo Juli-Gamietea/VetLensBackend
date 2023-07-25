@@ -1,4 +1,4 @@
-package com.api.vetlens.security.config;
+package com.api.vetlens.config;
 
 import com.api.vetlens.exceptions.UserNotFoundException;
 import com.api.vetlens.repository.UserRepository;
@@ -46,7 +46,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public Faker faker(){
+    public Faker faker() {
         return new Faker();
     }
 }

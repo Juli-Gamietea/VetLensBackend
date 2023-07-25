@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/dogs/{username}")
-    public ResponseEntity<List<DogResponseDTO>> getDogs(@PathVariable String username){
+    public ResponseEntity<List<DogResponseDTO>> getDogs(@PathVariable String username) {
         return ResponseEntity.ok(userService.getAllDogs(username));
     }
 }
