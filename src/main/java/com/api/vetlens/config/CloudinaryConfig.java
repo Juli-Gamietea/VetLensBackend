@@ -1,6 +1,7 @@
 package com.api.vetlens.config;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,11 +16,12 @@ public class CloudinaryConfig {
 
     @Bean
     public Cloudinary cloudinary() {
-        Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", CLOUD_NAME);
-        config.put("api_key", API_KEY);
-        config.put("api_secret", API_SECRET);
-
-        return new Cloudinary(config);
+       return new Cloudinary(
+               ObjectUtils.asMap(
+                "cloud_name", CLOUD_NAME,
+                "api_key", API_KEY,
+                "api_secret", API_SECRET,
+                "secure", true)
+       );
     }
 }
