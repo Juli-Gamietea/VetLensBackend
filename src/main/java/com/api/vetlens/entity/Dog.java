@@ -25,6 +25,10 @@ public class Dog {
     private String dogBreed;
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
+    @Enumerated(EnumType.STRING)
+    private Sex sex;
+    @Column(name = "is_castrated")
+    private boolean isCastrated;
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User owner;

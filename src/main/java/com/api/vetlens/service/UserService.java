@@ -3,6 +3,7 @@ package com.api.vetlens.service;
 import com.api.vetlens.dto.*;
 import com.api.vetlens.entity.Dog;
 import com.api.vetlens.entity.Role;
+import com.api.vetlens.entity.Sex;
 import com.api.vetlens.entity.User;
 import com.api.vetlens.exceptions.UserNotFoundException;
 import com.api.vetlens.repository.DogRepository;
@@ -84,10 +85,16 @@ public class UserService {
         dog.setName(request.getName());
         dog.setOwner(user);
         dog.setDateOfBirth(request.getDateOfBirth());
+        dog.setCastrated(request.isCastrated());
+        if (request.getSex().equalsIgnoreCase("MALE")) {
+            dog.setSex(Sex.MALE);
+        } else {
+            dog.setSex(Sex.FEMALE);
+        }
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
-    public List<DogResponseDTO> getAllDogs(String username){
+    public List<DogResponseDTO> getAllDogs(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("Usuario " + username + " no encontrado");

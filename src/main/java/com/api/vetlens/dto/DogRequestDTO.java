@@ -3,7 +3,6 @@ package com.api.vetlens.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,4 +28,8 @@ public class DogRequestDTO {
     @NotBlank(message = "El campo 'dueño' no puede estar vacío")
     @JsonProperty("owner_username")
     private String ownerUsername;
+    @NotBlank(message = "El campo 'sexo' no puede estar vacío")
+    private String sex;
+    @JsonProperty("is_castrated")
+    private boolean isCastrated;
 }

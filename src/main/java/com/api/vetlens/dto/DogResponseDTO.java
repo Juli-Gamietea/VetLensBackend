@@ -1,5 +1,6 @@
 package com.api.vetlens.dto;
 
+import com.api.vetlens.entity.Sex;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -22,4 +23,7 @@ public class DogResponseDTO {
     private LocalDate dateOfBirth;
     @JsonProperty("owner_username")
     private String ownerUsername;
+    private Sex sex;
+    @JsonProperty("is_castrated")
+    private boolean isCastrated;
 }

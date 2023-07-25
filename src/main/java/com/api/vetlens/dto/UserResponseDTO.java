@@ -1,6 +1,8 @@
 package com.api.vetlens.dto;
 
 import com.api.vetlens.entity.Role;
+import com.api.vetlens.entity.Sex;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ public class UserResponseDTO {
     private String email;
     private String firstname;
     private String lastname;
+    @JsonProperty("licence_number")
     private String licenceNumber;
     private Role role;
 }
