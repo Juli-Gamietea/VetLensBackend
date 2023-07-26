@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DogResponseDTO {
+    private Integer id;
     private String name;
     @JsonProperty("dog_breed")
     private String dogBreed;
