@@ -1,4 +1,4 @@
-package com.api.vetlens.dto;
+package com.api.vetlens.dto.user;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;

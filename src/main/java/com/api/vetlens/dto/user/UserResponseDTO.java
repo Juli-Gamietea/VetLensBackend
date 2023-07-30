@@ -1,4 +1,4 @@
-package com.api.vetlens.dto;
+package com.api.vetlens.dto.user;
 
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.Sex;

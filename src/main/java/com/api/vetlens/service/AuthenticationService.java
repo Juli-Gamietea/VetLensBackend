@@ -1,7 +1,7 @@
 package com.api.vetlens.service;
 
-import com.api.vetlens.dto.AuthenticationRequestDTO;
-import com.api.vetlens.dto.AuthenticationResponseDTO;
+import com.api.vetlens.dto.authentication.AuthenticationRequestDTO;
+import com.api.vetlens.dto.authentication.AuthenticationResponseDTO;
 import com.api.vetlens.dto.RegisterRequestDTO;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;

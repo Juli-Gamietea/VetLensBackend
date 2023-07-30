@@ -18,8 +18,7 @@ public class Anamnesis {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToMany(mappedBy = "anamnesis", fetch = FetchType.EAGER)
-    private List<QA> qas;
+    private String questionaryId;
     @OneToMany(mappedBy = "anamnesis", fetch = FetchType.EAGER)
     private List<Inference> inferences;
     @OneToOne(mappedBy = "anamnesis")

@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<ExceptionDTO> userNotFoundException(UserNotFoundException exception) {
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ExceptionDTO> userNotFoundException(NotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ExceptionDTO(exception.getMessage()));
     }
 

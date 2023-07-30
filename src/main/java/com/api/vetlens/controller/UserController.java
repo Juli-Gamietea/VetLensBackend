@@ -1,6 +1,10 @@
 package com.api.vetlens.controller;
 
 import com.api.vetlens.dto.*;
+import com.api.vetlens.dto.dog.DogRequestDTO;
+import com.api.vetlens.dto.dog.DogResponseDTO;
+import com.api.vetlens.dto.user.UserRequestDTO;
+import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

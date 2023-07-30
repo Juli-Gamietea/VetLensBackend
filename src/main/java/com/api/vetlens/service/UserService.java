@@ -1,11 +1,15 @@
 package com.api.vetlens.service;
 
 import com.api.vetlens.dto.*;
+import com.api.vetlens.dto.dog.DogRequestDTO;
+import com.api.vetlens.dto.dog.DogResponseDTO;
+import com.api.vetlens.dto.user.UserRequestDTO;
+import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.entity.Dog;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.Sex;
 import com.api.vetlens.entity.User;
-import com.api.vetlens.exceptions.UserNotFoundException;
+import com.api.vetlens.exceptions.NotFoundException;
 import com.api.vetlens.repository.DogRepository;
 import com.api.vetlens.repository.UserRepository;
 import com.github.javafaker.Faker;
@@ -42,17 +46,17 @@ public class UserService {
             User savedUser = userRepository.save(user);
             return mapper.map(savedUser, UserResponseDTO.class);
         }
-        throw new UserNotFoundException("Usuario " + request.getUsername() + " no encontrado");
+        throw new NotFoundException("Usuario " + request.getUsername() + " no encontrado");
     }
 
     public MessageDTO changePassword(String username, String oldPassword, String newPassword) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("Usuario " + username + " no encontrado");
+            throw new NotFoundException("Usuario " + username + " no encontrado");
         }
         User user = userOptional.get();
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new UserNotFoundException("Contraseña incorrecta");
+            throw new NotFoundException("Contraseña incorrecta");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
@@ -62,7 +66,7 @@ public class UserService {
     public MessageDTO forgotPassword(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("Usuario " + username + " no encontrado");
+            throw new NotFoundException("Usuario " + username + " no encontrado");
         }
         User user = userOptional.get();
         String pass = faker.internet().password();
@@ -77,7 +81,7 @@ public class UserService {
     public DogResponseDTO addDog(DogRequestDTO request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getOwnerUsername());
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("Usuario " + request.getOwnerUsername() + " no encontrado");
+            throw new NotFoundException("Usuario " + request.getOwnerUsername() + " no encontrado");
         }
         User user = userOptional.get();
         Dog dog = new Dog();
@@ -97,7 +101,7 @@ public class UserService {
     public List<DogResponseDTO> getAllDogs(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("Usuario " + username + " no encontrado");
+            throw new NotFoundException("Usuario " + username + " no encontrado");
         }
         List<Dog> dogs = dogRepository.findAllByOwner(userOptional.get());
         return dogs.stream().map(

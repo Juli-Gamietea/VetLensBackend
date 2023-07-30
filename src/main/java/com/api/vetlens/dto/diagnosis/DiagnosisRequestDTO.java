@@ -1,8 +1,8 @@
-package com.api.vetlens.dto;
+package com.api.vetlens.dto.diagnosis;
 
 import com.api.vetlens.dto.questionary.QuestionDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DiagnosisRequestDTO {
     private List<QuestionDTO> questions;
-    private DogRequestDTO dog;
-    private MultipartFile image;
+    @JsonProperty("dog_id")
+    private Integer dogId;
     private String username;
 }

@@ -1,4 +1,4 @@
-package com.api.vetlens.dto;
+package com.api.vetlens.dto.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponseDTO {
-    private String token;
+public class AuthenticationRequestDTO {
+    private String username;
+    private String password;
 }

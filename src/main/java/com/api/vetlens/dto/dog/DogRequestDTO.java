@@ -1,8 +1,9 @@
-package com.api.vetlens.dto;
+package com.api.vetlens.dto.dog;
 
-import com.api.vetlens.entity.Sex;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,19 +13,23 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
-public class DogResponseDTO {
-    private Integer id;
+@AllArgsConstructor
+public class DogRequestDTO {
+    @NotBlank(message = "El campo 'nombre' no puede estar vacío")
     private String name;
+    @NotBlank(message = "El campo 'raza' no puede estar vacío")
     @JsonProperty("dog_breed")
     private String dogBreed;
+    @Past(message = "La fecha debe ser menor a la actual")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
+    @NotBlank(message = "El campo 'dueño' no puede estar vacío")
     @JsonProperty("owner_username")
     private String ownerUsername;
-    private Sex sex;
+    @NotBlank(message = "El campo 'sexo' no puede estar vacío")
+    private String sex;
     @JsonProperty("is_castrated")
     private boolean isCastrated;
 }

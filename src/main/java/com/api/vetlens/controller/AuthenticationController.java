@@ -1,7 +1,7 @@
 package com.api.vetlens.controller;
 
-import com.api.vetlens.dto.AuthenticationRequestDTO;
-import com.api.vetlens.dto.AuthenticationResponseDTO;
+import com.api.vetlens.dto.authentication.AuthenticationRequestDTO;
+import com.api.vetlens.dto.authentication.AuthenticationResponseDTO;
 import com.api.vetlens.dto.RegisterRequestDTO;
 import com.api.vetlens.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;

@@ -19,12 +19,10 @@ public class Diagnosis {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private LocalDate date;
+    private String imageUrl;
     @ManyToOne
     @JoinColumn(name = "dog_id", referencedColumnName = "id")
     private Dog dog;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "image_id", referencedColumnName = "id")
-    private Image image;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
     private Anamnesis anamnesis;
