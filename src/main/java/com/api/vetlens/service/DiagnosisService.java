@@ -68,10 +68,13 @@ public class DiagnosisService {
 
     public DiagnosisResponseDTO concludeDiagnosis(MultipartFile image, Integer diagnosisId) {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        if (diagnosisOptional.isEmpty()) {
+            throw new NotFoundException("El diagnostico no existe");
+        }
         Diagnosis diagnosis = diagnosisOptional.get();
         String imageUrl = cloudinaryService.uploadFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
         diagnosis.setImageUrl(imageUrl);
-        diagnosis.getAnamnesis().setInferences(inferenceService.makeInference(image));
+        //diagnosis.getAnamnesis().setInferences(inferenceService.makeInference(image));
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 

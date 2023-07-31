@@ -1,9 +1,11 @@
 package com.api.vetlens.controller;
 
+import com.api.vetlens.dto.MessageDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
 import com.api.vetlens.service.DiagnosisService;
+import com.api.vetlens.service.InferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +18,7 @@ import java.util.List;
 @RequestMapping("/diagnosis")
 public class DiagnosisController {
     private final DiagnosisService diagnosisService;
+    private final InferenceService inferenceService;
 
     @GetMapping
     public ResponseEntity<List<QuestionDTO>> getQuestions() {
@@ -30,5 +33,10 @@ public class DiagnosisController {
     @PostMapping("/conclude/{diagnosisId}")
     public ResponseEntity<DiagnosisResponseDTO> concludeDiagnosis(@RequestPart(name = "image") MultipartFile image, @PathVariable Integer diagnosisId) {
         return ResponseEntity.ok(diagnosisService.concludeDiagnosis(image, diagnosisId));
+    }
+
+    @PostMapping("/test")
+    public ResponseEntity<MessageDTO> test(@RequestPart(name = "image") MultipartFile image) {
+        return ResponseEntity.ok(inferenceService.makeInference(image));
     }
 }

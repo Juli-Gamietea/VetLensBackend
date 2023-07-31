@@ -13,5 +13,4 @@ public class Answer {
     private String answer;
     private String help;
     private Question embeddedQuestion;
-    private Weight weights;
 }
