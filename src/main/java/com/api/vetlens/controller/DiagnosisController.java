@@ -1,6 +1,7 @@
 package com.api.vetlens.controller;
 
 import com.api.vetlens.dto.MessageDTO;
+import com.api.vetlens.dto.PredictionDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
@@ -54,7 +55,7 @@ public class DiagnosisController {
         return ResponseEntity.ok(diagnosisService.getDiagnosisValidationsByVetAndValue(vetId, value));
     }
     @PostMapping("/test")
-    public ResponseEntity<MessageDTO> test(@RequestPart(name = "image") MultipartFile image) {
+    public ResponseEntity<PredictionDTO> test(@RequestPart(name = "image") MultipartFile image) {
         return ResponseEntity.ok(inferenceService.makeInference(image));
     }
 
