@@ -16,7 +16,7 @@ import java.util.UUID;
 public class CloudinaryService {
     private final Cloudinary cloudinary;
 
-    public String uploadFile(MultipartFile multipartFile, String username, String dogName) {
+    public String uploadDiagnosisFile(MultipartFile multipartFile, String username, String dogName) {
         try{
             String fileId = username + "|" + LocalDate.now() + "|" + dogName + "(" + UUID.randomUUID() + ")";
             return cloudinary.uploader()
@@ -25,7 +25,31 @@ public class CloudinaryService {
                     .get("url")
                     .toString();
         }catch (IOException e){
-            throw new ApiException("Ocurrio un problema subiendo el archivo a Cloudinary");
+            throw new ApiException("Ocurrió un problema guardando la imagen");
+        }
+
+    }
+
+    public String uploadDogPhoto(MultipartFile multipartFile, String dogName) {
+        try{
+            String fileId = "profile-" + dogName ;
+            return cloudinary.uploader()
+                    .upload(multipartFile.getBytes(),
+                            Map.of("public_id", fileId))
+                    .get("url")
+                    .toString();
+        }catch (IOException e){
+            throw new ApiException("Ocurrió un problema guardando la imagen");
+        }
+
+    }
+
+    public void removeDogPhoto(String dogName) {
+        try{
+            String fileId = "profile-" + dogName ;
+            cloudinary.uploader().destroy(fileId, Map.of());
+        }catch (IOException e){
+            throw new ApiException("Ocurrió un problema eliminando la imagen");
         }
 
     }

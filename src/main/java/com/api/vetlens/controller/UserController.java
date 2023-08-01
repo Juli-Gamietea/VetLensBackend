@@ -1,6 +1,7 @@
 package com.api.vetlens.controller;
 
 import com.api.vetlens.dto.*;
+import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
@@ -10,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -43,5 +45,15 @@ public class UserController {
     @GetMapping("/dogs/{username}")
     public ResponseEntity<List<DogResponseDTO>> getDogs(@PathVariable String username) {
         return ResponseEntity.ok(userService.getAllDogs(username));
+    }
+
+    @PutMapping("/dog/photo/{idDog}")
+    public ResponseEntity<MessageDTO> addDogPhoto(@RequestPart(name = "image") MultipartFile image, @PathVariable Integer idDog) {
+        return ResponseEntity.ok(userService.addDogPhoto(idDog, image));
+    }
+
+    @PutMapping("/dog/photo/remove/{idDog}")
+    public ResponseEntity<MessageDTO> removeDogPhoto(@PathVariable Integer idDog) {
+        return ResponseEntity.ok(userService.removeDogPhoto(idDog));
     }
 }

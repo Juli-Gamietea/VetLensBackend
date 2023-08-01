@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DogRepository dogRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
     private final Faker faker;
     private final EmailService emailService;
     private ModelMapper mapper = new ModelMapper();
@@ -98,6 +100,28 @@ public class UserService {
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
+    public MessageDTO addDogPhoto(Integer dogId, MultipartFile photo){
+        Optional<Dog> dogOptional = dogRepository.findById(dogId);
+        if(dogOptional.isEmpty()){
+            throw new NotFoundException("El perro no existe");
+        }
+        Dog dog = dogOptional.get();
+        String photoUrl = cloudinaryService.uploadDogPhoto(photo, dog.getName());
+        dog.setPhotoUrl(photoUrl);
+        return new MessageDTO(photoUrl);
+    }
+
+    public MessageDTO removeDogPhoto(Integer dogId){
+        Optional<Dog> dogOptional = dogRepository.findById(dogId);
+        if(dogOptional.isEmpty()){
+            throw new NotFoundException("El perro no existe");
+        }
+        Dog dog = dogOptional.get();
+        cloudinaryService.removeDogPhoto(dog.getName());
+        dog.setPhotoUrl(null);
+        return new MessageDTO("Foto eliminada");
+    }
+
     public List<DogResponseDTO> getAllDogs(String username) {
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()) {
@@ -107,6 +131,14 @@ public class UserService {
         return dogs.stream().map(
                 dog -> mapper.map(dog, DogResponseDTO.class)
         ).collect(Collectors.toList());
+    }
+
+    public User getUserById(Integer id){
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()){
+            throw new NotFoundException("Usuario no encontrado");
+        }
+        return userOptional.get();
     }
 
     public void sendEmailNewAccount(String email, String password, String user) {

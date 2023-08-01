@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "diagnosis")
@@ -26,4 +27,6 @@ public class Diagnosis {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
     private Anamnesis anamnesis;
+    @OneToMany(mappedBy = "diagnosis", fetch = FetchType.EAGER)
+    private List<DiagnosisValidation> validations;
 }

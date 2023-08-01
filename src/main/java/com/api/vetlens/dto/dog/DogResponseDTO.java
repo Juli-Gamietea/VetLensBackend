@@ -27,4 +27,5 @@ public class DogResponseDTO {
     private Sex sex;
     @JsonProperty("is_castrated")
     private boolean isCastrated;
+    private String photoUrl;
 }

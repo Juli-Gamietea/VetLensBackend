@@ -33,6 +33,8 @@ public class User implements UserDetails {
     private String licenceNumber;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Dog> dogs;
+    @OneToMany(mappedBy = "vet", fetch = FetchType.EAGER)
+    private List<DiagnosisValidation> validations;
     @Enumerated(EnumType.STRING)
     private Role role;
 

@@ -2,17 +2,13 @@ package com.api.vetlens.service;
 
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
+import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
-import com.api.vetlens.entity.Anamnesis;
-import com.api.vetlens.entity.Diagnosis;
-import com.api.vetlens.entity.Dog;
+import com.api.vetlens.entity.*;
 import com.api.vetlens.entity.questionary.Question;
 import com.api.vetlens.entity.questionary.Questionary;
 import com.api.vetlens.exceptions.NotFoundException;
-import com.api.vetlens.repository.DiagnosisRepository;
-import com.api.vetlens.repository.DogRepository;
-import com.api.vetlens.repository.QuestionRepository;
-import com.api.vetlens.repository.QuestionaryRepository;
+import com.api.vetlens.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -34,6 +30,8 @@ public class DiagnosisService {
     private final QuestionaryRepository questionaryRepository;
     private final QuestionRepository questionRepository;
     private final DogRepository dogRepository;
+    private final DiagnosisValidationRepository diagnosisValidationRepository;
+    private final UserService userService;
     private final ModelMapper mapper = new ModelMapper();
 
     public DiagnosisResponseDTO startDiagnosis(DiagnosisRequestDTO request) {
@@ -59,23 +57,78 @@ public class DiagnosisService {
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
+    public DiagnosisResponseDTO concludeDiagnosis(MultipartFile image, Integer diagnosisId) {
+        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        if (diagnosisOptional.isEmpty()) {
+            throw new NotFoundException("El diagnóstico no existe");
+        }
+        Diagnosis diagnosis = diagnosisOptional.get();
+        String imageUrl = cloudinaryService.uploadDiagnosisFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
+        diagnosis.setImageUrl(imageUrl);
+        //diagnosis.getAnamnesis().setInferences(inferenceService.makeInference(image));
+        return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
+    }
+
+    public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, Integer userId) {
+        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        if(diagnosisOptional.isEmpty()){
+            throw new NotFoundException("Diagnóstico no encontrado");
+        }
+        User user = userService.getUserById(userId);
+        Optional<DiagnosisValidation> diagnosisValidationOptional = diagnosisValidationRepository.findByVet_IdAndDiagnosis_Id(userId, diagnosisId);
+        if (diagnosisValidationOptional.isEmpty()) {
+            DiagnosisValidation validation = DiagnosisValidation.builder()
+                    .vet(user)
+                    .diagnosis(diagnosisOptional.get())
+                    .notes(null)
+                    .disease(null)
+                    .value(Value.NOT_VALIDATED)
+                    .build();
+            return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationDTO.class);
+        }
+        return mapper.map(diagnosisValidationOptional.get(), DiagnosisValidationDTO.class);
+    }
+
+    public List<DiagnosisResponseDTO> getDiagnosisByDog(Integer dogId) {
+        List<Diagnosis> diagnosisList = diagnosisRepository.findAllByDog_Id(dogId);
+        if (diagnosisList.isEmpty()) {
+            throw new NotFoundException("El perro no posee diagnósticos");
+        }
+        return diagnosisList.stream().map(
+                diagnosis -> mapper.map(diagnosis, DiagnosisResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+
+    public List<DiagnosisValidationDTO> getDiagnosisValidationsByVetAndValue(Integer userId, String value){
+        List<DiagnosisValidation> validationsList;
+        if(value == null){
+            validationsList = diagnosisValidationRepository.findAllByVet_Id(userId);
+        }else{
+            Value valueEnum = Value.NOT_VALIDATED;
+            switch (value){
+                case "CORRECT":
+                    valueEnum = Value.CORRECT;
+                    break;
+                case "INCORRECT":
+                    valueEnum = Value.INCORRECT;
+                    break;
+            }
+            validationsList = diagnosisValidationRepository.findAllByVet_IdAndValue(userId, valueEnum);
+        }
+
+        if (validationsList.isEmpty()) {
+            throw new NotFoundException("El veterinario no posee diagnósticos");
+        }
+        return validationsList.stream().map(
+                validation -> mapper.map(validation, DiagnosisValidationDTO.class)
+        ).collect(Collectors.toList());
+    }
+
     public List<QuestionDTO> getQuestions() {
         List<Question> questions = questionRepository.findAll();
         return questions.stream().map(
                 question -> mapper.map(question, QuestionDTO.class)
         ).collect(Collectors.toList());
-    }
-
-    public DiagnosisResponseDTO concludeDiagnosis(MultipartFile image, Integer diagnosisId) {
-        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
-        if (diagnosisOptional.isEmpty()) {
-            throw new NotFoundException("El diagnostico no existe");
-        }
-        Diagnosis diagnosis = diagnosisOptional.get();
-        String imageUrl = cloudinaryService.uploadFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
-        diagnosis.setImageUrl(imageUrl);
-        //diagnosis.getAnamnesis().setInferences(inferenceService.makeInference(image));
-        return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
     private List<Question> mapQuestionsToEntities(List<QuestionDTO> questionDTOS) {
