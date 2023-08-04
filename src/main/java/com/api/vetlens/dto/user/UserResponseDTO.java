@@ -17,7 +17,9 @@ public class UserResponseDTO {
     private String email;
     private String firstname;
     private String lastname;
-    @JsonProperty("licence_number")
-    private String licenceNumber;
+    @JsonProperty("license_number")
+    private String licenseNumber;
     private Role role;
+    @JsonProperty("is_validated")
+    private boolean isValidated;
 }

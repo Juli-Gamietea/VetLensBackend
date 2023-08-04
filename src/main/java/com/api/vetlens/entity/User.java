@@ -29,14 +29,15 @@ public class User implements UserDetails {
     private String firstName;
     @Column(name = "last_name", length = 30)
     private String lastname;
-    @Column(name = "licence_number", length = 40)
-    private String licenceNumber;
+    @Column(name = "license_number", length = 40)
+    private String licenseNumber;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
     private List<Dog> dogs;
     @OneToMany(mappedBy = "vet", fetch = FetchType.EAGER)
     private List<DiagnosisValidation> validations;
     @Enumerated(EnumType.STRING)
     private Role role;
+    private boolean isValidated;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

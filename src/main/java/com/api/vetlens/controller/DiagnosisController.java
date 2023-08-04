@@ -5,8 +5,12 @@ import com.api.vetlens.dto.PredictionDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
+import com.api.vetlens.dto.diagnosis.DiseaseDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
+import com.api.vetlens.entity.Disease;
+import com.api.vetlens.entity.Inference;
 import com.api.vetlens.service.DiagnosisService;
+import com.api.vetlens.service.DiseaseService;
 import com.api.vetlens.service.InferenceService;
 import com.api.vetlens.service.QRService;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +25,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/diagnosis")
 public class DiagnosisController {
-    private QRService qrService;
+    private final QRService qrService;
     private final DiagnosisService diagnosisService;
     private final InferenceService inferenceService;
+
+    private final DiseaseService diseaseService;
 
     @GetMapping
     public ResponseEntity<List<QuestionDTO>> getQuestions() {
@@ -54,9 +60,10 @@ public class DiagnosisController {
     public ResponseEntity<List<DiagnosisValidationDTO>> getDiagnosisValidationByVetAndValue(@PathVariable Integer vetId, @PathVariable String value) {
         return ResponseEntity.ok(diagnosisService.getDiagnosisValidationsByVetAndValue(vetId, value));
     }
-    @PostMapping("/test")
-    public ResponseEntity<PredictionDTO> test(@RequestPart(name = "image") MultipartFile image) {
-        return ResponseEntity.ok(inferenceService.makeInference(image));
+
+    @GetMapping("/test/{id}")
+    public ResponseEntity<Disease> getdto(@PathVariable Integer id) {
+        return ResponseEntity.ok(diseaseService.getDisease(id));
     }
 
     @GetMapping("/qr/{diagnosisId}")

@@ -2,7 +2,7 @@ package com.api.vetlens.service;
 
 import com.api.vetlens.dto.authentication.AuthenticationRequestDTO;
 import com.api.vetlens.dto.authentication.AuthenticationResponseDTO;
-import com.api.vetlens.dto.RegisterRequestDTO;
+import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;
 import com.api.vetlens.exceptions.UserAlreadyExistsException;
@@ -25,19 +25,25 @@ public class AuthenticationService {
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponseDTO register(RegisterRequestDTO request) {
+    public AuthenticationResponseDTO register(UserRequestDTO request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
         if(userOptional.isPresent()){
             throw new UserAlreadyExistsException("El nombre de usuario " + request.getUsername() + " se encuentra en uso");
         }
         var user = User.builder()
-                .firstName(request.getFirstname())
+                .firstName(request.getFirstName())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
                 .username(request.getUsername())
+                .licenseNumber(request.getLicenseNumber())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.DEFAULT)
                 .build();
+
+        if (request.getRole().equals("VET")) {
+            user.setRole(Role.VET);
+        }else{
+           user.setRole(Role.DEFAULT);
+        }
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         userService.sendEmailNewAccount(request.getEmail(), request.getPassword(), request.getUsername());

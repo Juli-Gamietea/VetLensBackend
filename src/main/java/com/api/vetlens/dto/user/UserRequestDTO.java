@@ -29,10 +29,11 @@ public class UserRequestDTO {
     @Size(max = 30, message = "El apellido no puede contener mas de 30 caracteres")
     @JsonProperty("last_name")
     private String lastname;
-    @NotBlank(message = "El campo 'numero de licencia' no puede estar vacío")
     @Size(max = 40, message = "El nro de licencia no puede contener mas de 40 caracteres")
-    @JsonProperty("licence_number")
-    private String licenceNumber;
-    @NotNull(message = "El campo 'rol' no puede estar vacío")
+    @JsonProperty("license_number")
+    private String licenseNumber;
+    @NotBlank(message = "El campo 'rol' no puede estar vacío")
     private String role;
+    @NotBlank(message = "El campo 'contraseña' no puede estar vacío")
+    private String password;
 }

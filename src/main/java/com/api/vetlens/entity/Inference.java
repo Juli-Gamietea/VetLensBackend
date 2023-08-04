@@ -19,7 +19,7 @@ public class Inference {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "disease_id", referencedColumnName = "id")
     private Disease disease;
-    private Float probability;
+    private String probability;
     @ManyToOne
     @JoinColumn(name = "anamnesis_id", referencedColumnName = "id")
     private Anamnesis anamnesis;

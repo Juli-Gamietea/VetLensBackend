@@ -44,7 +44,7 @@ public class UserService {
             }
             user.setFirstName(request.getFirstName());
             user.setLastname(request.getLastname());
-            user.setLicenceNumber(request.getLicenceNumber());
+            user.setLicenseNumber(request.getLicenseNumber());
             User savedUser = userRepository.save(user);
             return mapper.map(savedUser, UserResponseDTO.class);
         }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,13 +30,13 @@ public class DiagnosisService {
     private final DiagnosisRepository diagnosisRepository;
     private final QuestionaryRepository questionaryRepository;
     private final QuestionRepository questionRepository;
+    private final AnamnesisRepository anamnesisRepository;
     private final DogRepository dogRepository;
     private final DiagnosisValidationRepository diagnosisValidationRepository;
     private final UserService userService;
     private final ModelMapper mapper = new ModelMapper();
 
     public DiagnosisResponseDTO startDiagnosis(DiagnosisRequestDTO request) {
-
         Diagnosis diagnosis = new Diagnosis();
         Anamnesis anamnesis = new Anamnesis();
         LocalDate date = LocalDate.now();
@@ -50,6 +51,7 @@ public class DiagnosisService {
         String questionaryId = request.getUsername() + "|" + date + "|" + dog.getName() + "(" + UUID.randomUUID() + ")";
         questionaryRepository.save(new Questionary(questionaryId, questions));
         anamnesis.setQuestionaryId(questionaryId);
+        anamnesis.setInferences(new ArrayList<>());
 
         diagnosis.setAnamnesis(anamnesis);
         diagnosis.setDate(date);
@@ -65,8 +67,14 @@ public class DiagnosisService {
         Diagnosis diagnosis = diagnosisOptional.get();
         String imageUrl = cloudinaryService.uploadDiagnosisFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
         diagnosis.setImageUrl(imageUrl);
-        //diagnosis.getAnamnesis().setInferences(inferenceService.makeInference(image));
-        return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
+
+        Anamnesis anamnesis = diagnosis.getAnamnesis();
+        anamnesis = inferenceService.makeInference(image, anamnesis);
+        anamnesisRepository.save(anamnesis);
+        diagnosis.setAnamnesis(anamnesis);
+
+        DiagnosisResponseDTO response = mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
+        return response;
     }
 
     public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, Integer userId) {

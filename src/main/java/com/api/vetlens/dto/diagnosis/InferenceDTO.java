@@ -12,5 +12,5 @@ import lombok.Setter;
 public class InferenceDTO {
     private Integer id;
     private DiseaseDTO disease;
-    private Float probability;
+    private String probability;
 }

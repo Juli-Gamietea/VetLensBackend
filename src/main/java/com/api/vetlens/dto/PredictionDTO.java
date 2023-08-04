@@ -12,8 +12,11 @@ import lombok.Setter;
 @Setter
 public class PredictionDTO {
     @JsonProperty("dermatitis_piotraumatica")
-    private Float dermatitisPiotraumatica;
-    private Float dermatofitosis;
-    private Float miasis;
-    private Float otras;
+    private Float pyotraumaticDermatitis;
+    @JsonProperty("dermatofitosis")
+    private Float dermatophytosis;
+    @JsonProperty("miasis")
+    private Float myasis;
+    @JsonProperty("otras")
+    private Float others;
 }

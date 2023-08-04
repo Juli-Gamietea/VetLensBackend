@@ -1,7 +1,6 @@
 package com.api.vetlens.controller;
 
 import com.api.vetlens.dto.*;
-import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
