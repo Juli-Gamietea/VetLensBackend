@@ -108,6 +108,7 @@ public class UserService {
         Dog dog = dogOptional.get();
         String photoUrl = cloudinaryService.uploadDogPhoto(photo, dog.getName());
         dog.setPhotoUrl(photoUrl);
+        dogRepository.save(dog);
         return new MessageDTO(photoUrl);
     }
 
@@ -119,7 +120,19 @@ public class UserService {
         Dog dog = dogOptional.get();
         cloudinaryService.removeDogPhoto(dog.getName());
         dog.setPhotoUrl(null);
+        dogRepository.save(dog);
         return new MessageDTO("Foto eliminada");
+    }
+
+    public MessageDTO removeDog(Integer dogId){
+        Optional<Dog> dogOptional = dogRepository.findById(dogId);
+        if(dogOptional.isEmpty()){
+            throw new NotFoundException("El perro no existe");
+        }
+        Dog dog = dogOptional.get();
+        cloudinaryService.removeDogPhoto(dog.getName());
+        dogRepository.delete(dog);
+        return new MessageDTO("Perro eliminado");
     }
 
     public List<DogResponseDTO> getAllDogs(String username) {

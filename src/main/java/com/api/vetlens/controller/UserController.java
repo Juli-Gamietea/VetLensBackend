@@ -55,4 +55,9 @@ public class UserController {
     public ResponseEntity<MessageDTO> removeDogPhoto(@PathVariable Integer idDog) {
         return ResponseEntity.ok(userService.removeDogPhoto(idDog));
     }
+
+    @DeleteMapping("/dog/remove/{idDog}")
+    public ResponseEntity<MessageDTO> removeDog(@PathVariable Integer idDog) {
+        return ResponseEntity.ok(userService.removeDog(idDog));
+    }
 }
