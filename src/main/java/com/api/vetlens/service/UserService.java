@@ -43,7 +43,7 @@ public class UserService {
                 user.setRole(Role.VET);
             }
             user.setFirstName(request.getFirstName());
-            user.setLastname(request.getLastname());
+            user.setLastName(request.getLastName());
             user.setLicenseNumber(request.getLicenseNumber());
             User savedUser = userRepository.save(user);
             return mapper.map(savedUser, UserResponseDTO.class);

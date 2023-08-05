@@ -4,7 +4,6 @@ package com.api.vetlens.dto.user;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,7 +27,7 @@ public class UserRequestDTO {
     @NotBlank(message = "El campo 'apellido' no puede estar vacío")
     @Size(max = 30, message = "El apellido no puede contener mas de 30 caracteres")
     @JsonProperty("last_name")
-    private String lastname;
+    private String lastName;
     @Size(max = 40, message = "El nro de licencia no puede contener mas de 40 caracteres")
     @JsonProperty("license_number")
     private String licenseNumber;

@@ -10,5 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MachineLearningClient {
     @RequestLine("POST /")
     @Headers("Content-Type: multipart/form-data")
-    Response uploadFile(@Param("image") MultipartFile file);
+    Response makePrediction(@Param("image") MultipartFile file);
 }

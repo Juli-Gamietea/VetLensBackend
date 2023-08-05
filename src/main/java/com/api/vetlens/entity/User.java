@@ -28,7 +28,7 @@ public class User implements UserDetails {
     @Column(name = "first_name", length = 30)
     private String firstName;
     @Column(name = "last_name", length = 30)
-    private String lastname;
+    private String lastName;
     @Column(name = "license_number", length = 40)
     private String licenseNumber;
     @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)

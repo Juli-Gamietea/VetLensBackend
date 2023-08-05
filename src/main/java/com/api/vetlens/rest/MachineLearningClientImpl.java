@@ -16,7 +16,8 @@ public class MachineLearningClientImpl {
         try {
             MachineLearningClient fileMachineLearningClient = Feign.builder().encoder(new SpringFormEncoder())
                     .target(MachineLearningClient.class, URL);
-            Response response = fileMachineLearningClient.uploadFile(image);
+            Response response = fileMachineLearningClient.makePrediction(image);
+            System.out.println(response.body().toString());
             return MAPPER.readValue(response.body().toString(), PredictionDTO.class);
         } catch (Exception e) {
             throw new ApiException("Ocurrió un problema obteniendo la inferencia");

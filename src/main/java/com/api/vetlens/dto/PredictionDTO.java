@@ -17,6 +17,7 @@ public class PredictionDTO {
     private Float dermatophytosis;
     @JsonProperty("miasis")
     private Float myasis;
-    @JsonProperty("otras")
-    private Float others;
+    @JsonProperty("no_discernible")
+    private Float notDiscernible;
+    private String result;
 }
