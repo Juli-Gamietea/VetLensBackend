@@ -17,4 +17,5 @@ public class AnamnesisDTO {
     @JsonProperty("questionary_id")
     private String questionaryId;
     private List<InferenceDTO> inferences;
+    private String result;
 }

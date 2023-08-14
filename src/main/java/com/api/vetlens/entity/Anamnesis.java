@@ -23,4 +23,5 @@ public class Anamnesis {
     private List<Inference> inferences;
     @OneToOne(mappedBy = "anamnesis")
     private Diagnosis diagnosis;
+    private String result;
 }
