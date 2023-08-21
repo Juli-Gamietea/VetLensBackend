@@ -1,5 +1,6 @@
 package com.api.vetlens.service;
 
+import com.api.vetlens.entity.Diagnosis;
 import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.NotFoundException;
 import com.api.vetlens.repository.DiagnosisRepository;
@@ -16,27 +17,31 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class QRService {
     private final DiagnosisRepository diagnosisRepository;
-
+    private final UserService userService;
     public byte[] getQr(Integer diagnosisId) {
-        boolean exists = diagnosisRepository.existsById(diagnosisId);
-        if (!exists) {
+        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        if (diagnosisOptional.isEmpty()) {
             throw new NotFoundException("Diagnosis no encontrada");
         }
         try {
-            return generateQR(diagnosisId);
+            return generateQR(diagnosisOptional.get());
         } catch (Exception e) {
             throw new ApiException("Error generando el QR " + e.getMessage());
         }
     }
 
-    private byte[] generateQR(Integer diagnosisId) throws WriterException, IOException {
+    private byte[] generateQR(Diagnosis diagnosis) throws WriterException, IOException {
+
+        String username = diagnosis.getDog().getOwner().getUsername();
+
         var qrCodeWriter = new QRCodeWriter();
-        BitMatrix bitMatrix = qrCodeWriter.encode(diagnosisId.toString(), BarcodeFormat.QR_CODE, 400, 400);
+        BitMatrix bitMatrix = qrCodeWriter.encode(diagnosis.getId().toString(), BarcodeFormat.QR_CODE, 400, 400);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         MatrixToImageWriter.writeToStream(bitMatrix, "PNG", baos);
         byte[] qrCodeBytes = baos.toByteArray();
@@ -46,7 +51,8 @@ public class QRService {
                 MediaType.IMAGE_PNG_VALUE,
                 qrCodeBytes
         );
-
-        return file.getBytes();
+        byte[] qr = file.getBytes();
+        userService.sendEmailWithQR(username, file);
+        return qr;
     }
 }

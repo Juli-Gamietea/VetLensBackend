@@ -9,6 +9,7 @@ import com.api.vetlens.entity.Dog;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.Sex;
 import com.api.vetlens.entity.User;
+import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.NotFoundException;
 import com.api.vetlens.repository.DogRepository;
 import com.api.vetlens.repository.UserRepository;
@@ -19,7 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -39,12 +45,8 @@ public class UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setEmail(request.getEmail());
-            if (request.getRole().equals("VET")) {
-                user.setRole(Role.VET);
-            }
             user.setFirstName(request.getFirstName());
             user.setLastName(request.getLastName());
-            user.setLicenseNumber(request.getLicenseNumber());
             User savedUser = userRepository.save(user);
             return mapper.map(savedUser, UserResponseDTO.class);
         }
@@ -52,11 +54,7 @@ public class UserService {
     }
 
     public MessageDTO changePassword(String username, String oldPassword, String newPassword) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("Usuario " + username + " no encontrado");
-        }
-        User user = userOptional.get();
+        User user = getUser(username);
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new NotFoundException("Contraseña incorrecta");
         }
@@ -66,11 +64,8 @@ public class UserService {
     }
 
     public MessageDTO forgotPassword(String username) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("Usuario " + username + " no encontrado");
-        }
-        User user = userOptional.get();
+
+        User user = getUser(username);
         String pass = faker.internet().password();
         user.setPassword(passwordEncoder.encode(pass));
 
@@ -81,15 +76,29 @@ public class UserService {
     }
 
     public DogResponseDTO addDog(DogRequestDTO request) {
-        Optional<User> userOptional = userRepository.findByUsername(request.getOwnerUsername());
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("Usuario " + request.getOwnerUsername() + " no encontrado");
-        }
-        User user = userOptional.get();
+        User user = getUser(request.getOwnerUsername());
         Dog dog = new Dog();
         dog.setDogBreed(request.getDogBreed());
         dog.setName(request.getName());
         dog.setOwner(user);
+        dog.setDateOfBirth(request.getDateOfBirth());
+        dog.setCastrated(request.isCastrated());
+        if (request.getSex().equalsIgnoreCase("MALE")) {
+            dog.setSex(Sex.MALE);
+        } else {
+            dog.setSex(Sex.FEMALE);
+        }
+        return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
+    }
+
+    public DogResponseDTO updateDog(DogRequestDTO request) {
+        getUser(request.getOwnerUsername());
+        Optional<Dog> dogOptional = dogRepository.findByName(request.getName());
+        if (dogOptional.isEmpty()) {
+            throw new NotFoundException("Perro " + request.getName() + " no encontrado");
+        }
+        Dog dog = dogOptional.get();
+        dog.setDogBreed(request.getDogBreed());
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
         if (request.getSex().equalsIgnoreCase("MALE")) {
@@ -136,11 +145,7 @@ public class UserService {
     }
 
     public List<DogResponseDTO> getAllDogs(String username) {
-        Optional<User> userOptional = userRepository.findByUsername(username);
-        if (userOptional.isEmpty()) {
-            throw new NotFoundException("Usuario " + username + " no encontrado");
-        }
-        List<Dog> dogs = dogRepository.findAllByOwner(userOptional.get());
+        List<Dog> dogs = dogRepository.findAllByOwner(getUser(username));
         return dogs.stream().map(
                 dog -> mapper.map(dog, DogResponseDTO.class)
         ).collect(Collectors.toList());
@@ -150,6 +155,14 @@ public class UserService {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()){
             throw new NotFoundException("Usuario no encontrado");
+        }
+        return userOptional.get();
+    }
+
+    public User getUser(String username){
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if (userOptional.isEmpty()){
+            throw new NotFoundException("Usuario " + username + " no encontrado");
         }
         return userOptional.get();
     }
@@ -186,7 +199,6 @@ public class UserService {
     private void sendEmailChangedPass(String email, String password) {
         emailService.sendEmail(email, "CONTRASEÑA MODIFICADA CON EXITO", "" +
                 " <html>" +
-
                 "<body>" +
                 "<div style='font-family:sans-serif;'>" +
                 "<h1>VetLens</h1>" +
@@ -204,9 +216,39 @@ public class UserService {
                 "</p>" +
                 "<p><b>-VetLens Team</b></p>" +
                 "</div>" +
-
                 "</body>" +
-
                 "</html>");
+    }
+
+    public void sendEmailWithQR(String username, MultipartFile qr){
+        User user = getUser(username);
+        try{
+            File convFile = new File(Objects.requireNonNull(qr.getOriginalFilename()));
+            FileOutputStream fos = new FileOutputStream( convFile );
+            fos.write(qr.getBytes());
+            fos.close();
+            emailService.sendEmailWithAttachment(user.getEmail(),
+                    "NUEVO DIAGNÓSTICO",
+                    "" +
+                            " <html>" +
+                            "<body>" +
+                            "<div style='font-family:sans-serif;'>" +
+                            "<h1>VetLens</h1>" +
+                            "<h2>Se ha creado un nuevo diagnóstico</h2>" +
+                            "<h3>" +
+                            "Le adjuntamos el código QR para consultar información de su diagnóstico" +
+                            "</h3>" +
+                            "<p>" +
+                            "Gracias por usar VetLens." +
+                            "</p>" +
+                            "<p><b>-VetLens Team</b></p>" +
+                            "</div>" +
+                            "</body>" +
+                            "</html>",
+                    convFile);
+        } catch (IOException exception) {
+            throw new ApiException("Error enviando el QR por mail");
+        }
+
     }
 }

@@ -27,13 +27,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ExceptionDTO> apiException(HttpRequestMethodNotSupportedException exception) {
+    public ResponseEntity<ExceptionDTO> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO(exception.getMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionDTO> handleException(MethodArgumentNotValidException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO(e.getFieldError().getDefaultMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ExceptionDTO(e.getFieldError().getDefaultMessage()));
     }
 
     @ExceptionHandler(ExpiredJwtException.class)

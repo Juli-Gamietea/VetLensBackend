@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface DogRepository extends JpaRepository<Dog, Integer> {
     List<Dog> findAllByOwner(User owner);
     Optional<Dog> findById(Integer id);
+
+    Optional<Dog> findByName(String name);
 }

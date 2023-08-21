@@ -7,6 +7,7 @@ import com.api.vetlens.dto.questionary.QuestionDTO;
 import com.api.vetlens.entity.*;
 import com.api.vetlens.entity.questionary.Question;
 import com.api.vetlens.entity.questionary.Questionary;
+import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.NotFoundException;
 import com.api.vetlens.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,6 @@ public class DiagnosisService {
         Diagnosis diagnosis = new Diagnosis();
         Anamnesis anamnesis = new Anamnesis();
         LocalDate date = LocalDate.now();
-
         Optional<Dog> optionalDog = dogRepository.findById(request.getDogId());
         if (optionalDog.isEmpty()) {
             throw new NotFoundException("El perro no existe");
