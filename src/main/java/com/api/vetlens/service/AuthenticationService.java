@@ -5,6 +5,7 @@ import com.api.vetlens.dto.authentication.AuthenticationResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.User;
+import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.UserAlreadyExistsException;
 import com.api.vetlens.repository.UserRepository;
 import com.api.vetlens.security.JwtService;
@@ -90,6 +91,8 @@ public class AuthenticationService {
                         .refreshToken(refreshToken)
                         .build();
                 new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
+            } else {
+                throw new ApiException("Solicitud incorrecta");
             }
         }
     }
