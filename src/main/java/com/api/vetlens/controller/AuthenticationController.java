@@ -87,6 +87,7 @@ public class AuthenticationController {
     )
     @PostMapping("/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("print");
         authenticationService.refresh(request, response);
     }
 }

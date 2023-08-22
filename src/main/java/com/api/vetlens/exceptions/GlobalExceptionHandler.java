@@ -40,7 +40,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ResponseEntity<ExceptionDTO> handleException() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO("El token ha expirado"));
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new ExceptionDTO("El token ha expirado"));
     }
 
     @ExceptionHandler(IOException.class)

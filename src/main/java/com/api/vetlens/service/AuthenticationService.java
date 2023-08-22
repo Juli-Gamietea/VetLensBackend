@@ -74,6 +74,7 @@ public class AuthenticationService {
     }
 
     public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("entre");
         final String authHeader = request.getHeader("Authorization");
         final String refreshToken;
         final String username;
@@ -81,7 +82,10 @@ public class AuthenticationService {
             return;
         }
         refreshToken = authHeader.substring(7);
+        System.out.println(refreshToken);
         username = jwtService.extractUsername(refreshToken);
+        System.out.println(username);
+
         if (username != null) {
             var user = this.userRepository.findByUsername(username).orElseThrow();
             if (jwtService.isTokenValid(refreshToken, user)) {
@@ -94,6 +98,8 @@ public class AuthenticationService {
             } else {
                 throw new ApiException("Solicitud incorrecta");
             }
+        } else {
+            throw new ApiException("Solicitud incorrecta");
         }
     }
 }
