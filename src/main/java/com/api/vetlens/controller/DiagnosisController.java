@@ -32,6 +32,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 @RequestMapping("/diagnosis")
 @Tag(name = "Diagnosis Controller")
 public class DiagnosisController {

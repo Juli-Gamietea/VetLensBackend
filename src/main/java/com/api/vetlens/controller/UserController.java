@@ -23,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/users")
 @Tag(name = "User Controller")
+@CrossOrigin
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
