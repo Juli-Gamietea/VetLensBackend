@@ -82,6 +82,9 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(authenticationRequest));
     }
 
+    @Operation(
+            summary = "Obtener token nuevo a partir del refresh token"
+    )
     @PostMapping("/refresh")
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         authenticationService.refresh(request, response);
