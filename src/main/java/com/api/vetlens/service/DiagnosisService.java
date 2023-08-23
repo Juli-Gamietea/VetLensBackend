@@ -97,6 +97,14 @@ public class DiagnosisService {
         return mapper.map(diagnosisValidationOptional.get(), DiagnosisValidationDTO.class);
     }
 
+    public DiagnosisResponseDTO getDiagnosisById(Integer id) {
+        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(id);
+        if (diagnosisOptional.isEmpty()) {
+            throw new NotFoundException("El diagnóstico no existe");
+        }
+        return mapper.map(diagnosisOptional.get(), DiagnosisResponseDTO.class);
+    }
+
     public List<DiagnosisResponseDTO> getDiagnosisByDog(Integer dogId) {
         List<Diagnosis> diagnosisList = diagnosisRepository.findAllByDog_Id(dogId);
         if (diagnosisList.isEmpty()) {
@@ -144,4 +152,5 @@ public class DiagnosisService {
                 questionDTO -> mapper.map(questionDTO, Question.class)
         ).collect(Collectors.toList());
     }
+
 }

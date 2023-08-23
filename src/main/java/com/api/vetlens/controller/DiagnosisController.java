@@ -155,6 +155,14 @@ public class DiagnosisController {
     }
 
     @Operation(
+            summary = "Obtener diagnóstico por id"
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<DiagnosisResponseDTO> getDiagnosisById(@NotNull(message = "El campo 'id' no puede estar vacío") @PathVariable Integer id) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisById(id));
+    }
+
+    @Operation(
             summary = "Obtener validacion de diagnostico por veterinario"
     )
     @GetMapping("/{diagnosisId}/{userId}")
