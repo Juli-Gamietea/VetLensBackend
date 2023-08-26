@@ -167,6 +167,10 @@ public class UserService {
         return userOptional.get();
     }
 
+    public UserResponseDTO getUserByUsername(String username) {
+        return mapper.map(getUser(username), UserResponseDTO.class);
+    }
+
     public void sendEmailNewAccount(String email, String password, String user) {
         emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
                 "<html>" +

@@ -68,6 +68,15 @@ public class UserController {
     public ResponseEntity<UserResponseDTO> updateUser(@RequestBody @Valid UserRequestDTO request) {
         return ResponseEntity.ok(userService.update(request));
     }
+
+    @Operation(
+            summary = "Obtener un usuario por su nombre de usuario"
+    )
+    @GetMapping("/{username}")
+    public ResponseEntity<UserResponseDTO> getUserByUsername(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
     @Operation(
             summary = "Actualizar contraseña"
     )
