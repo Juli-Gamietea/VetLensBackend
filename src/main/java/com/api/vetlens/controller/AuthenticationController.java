@@ -5,6 +5,7 @@ import com.api.vetlens.dto.authentication.AuthenticationRequestDTO;
 import com.api.vetlens.dto.authentication.AuthenticationResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.service.AuthenticationService;
+import com.api.vetlens.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,6 +26,7 @@ import java.io.IOException;
 @Tag(name = "Authentication Controller")
 public class AuthenticationController {
     private final AuthenticationService authenticationService;
+    private final UserService userService;
 
     @Operation(
             summary = "Registrar usuario",
@@ -89,5 +91,13 @@ public class AuthenticationController {
     public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         System.out.println("print");
         authenticationService.refresh(request, response);
+    }
+
+    @Operation(
+            summary = "Comprobar disponibilidad de nombre de usuario"
+    )
+    @GetMapping("/available/{username}")
+    public boolean checkUsernameAvailability(@PathVariable String username) {
+        return userService.checkUsernameAvailability(username);
     }
 }

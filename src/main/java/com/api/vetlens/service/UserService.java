@@ -11,6 +11,7 @@ import com.api.vetlens.entity.Sex;
 import com.api.vetlens.entity.User;
 import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.NotFoundException;
+import com.api.vetlens.exceptions.UserAlreadyExistsException;
 import com.api.vetlens.repository.DogRepository;
 import com.api.vetlens.repository.UserRepository;
 import com.github.javafaker.Faker;
@@ -51,6 +52,14 @@ public class UserService {
             return mapper.map(savedUser, UserResponseDTO.class);
         }
         throw new NotFoundException("Usuario " + request.getUsername() + " no encontrado");
+    }
+
+    public boolean checkUsernameAvailability(String username) {
+        Optional<User> userOptional = userRepository.findByUsername(username);
+        if(userOptional.isPresent()){
+            return false;
+        }
+        return true;
     }
 
     public MessageDTO changePassword(String username, String oldPassword, String newPassword) {
