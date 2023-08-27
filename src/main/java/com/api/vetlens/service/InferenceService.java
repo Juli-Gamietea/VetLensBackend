@@ -6,6 +6,7 @@ import com.api.vetlens.entity.Inference;
 import com.api.vetlens.repository.InferenceRepository;
 import com.api.vetlens.rest.MachineLearningClientImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,6 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class InferenceService {
     private final MachineLearningClientImpl client = new MachineLearningClientImpl();
     private final DiseaseService diseaseService;
@@ -25,7 +27,7 @@ public class InferenceService {
         List<Inference> inferences = new ArrayList<>();
         PredictionDTO prediction = client.makeInference(image);
 
-
+        log.info("Seteando las probabilidades y enfermedades obtenidas");
         Inference pyotraumaticDermatitis = new Inference();
         pyotraumaticDermatitis.setProbability(formatNumber(prediction.getPyotraumaticDermatitis()));
         pyotraumaticDermatitis.setAnamnesis(anamnesis);

@@ -1,45 +1,40 @@
 package com.api.vetlens.controller;
 
 import com.api.vetlens.dto.MessageDTO;
-import com.api.vetlens.dto.PredictionDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
-import com.api.vetlens.dto.diagnosis.DiseaseDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
-import com.api.vetlens.entity.Disease;
-import com.api.vetlens.entity.Inference;
-import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.service.DiagnosisService;
 import com.api.vetlens.service.DiseaseService;
-import com.api.vetlens.service.InferenceService;
 import com.api.vetlens.service.QRService;
+import com.google.zxing.WriterException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
 @RequestMapping("/diagnosis")
+@Slf4j
 @Tag(name = "Diagnosis Controller")
 public class DiagnosisController {
     private final QRService qrService;
     private final DiagnosisService diagnosisService;
-
-    private final DiseaseService diseaseService;
 
     @Operation(
             summary = "Obtener preguntas para comenzar el diagnostico",
@@ -59,6 +54,7 @@ public class DiagnosisController {
     )
     @GetMapping
     public ResponseEntity<List<QuestionDTO>> getQuestions() {
+        log.info("Request /diagnosis/questions");
         return ResponseEntity.ok(diagnosisService.getQuestions());
     }
 
@@ -101,6 +97,7 @@ public class DiagnosisController {
     )
     @PostMapping("/start")
     public ResponseEntity<DiagnosisResponseDTO> startDiagnosis(@RequestBody @Valid DiagnosisRequestDTO request) {
+        log.info("Request /diagnosis/start");
         return ResponseEntity.ok(diagnosisService.startDiagnosis(request));
     }
 
@@ -142,7 +139,8 @@ public class DiagnosisController {
             }
     )
     @PostMapping("/conclude/{diagnosisId}")
-    public ResponseEntity<DiagnosisResponseDTO> concludeDiagnosis(@NotNull(message = "No se ha enviado una imagen") @RequestPart(name = "image") MultipartFile image, @NotNull(message = "El campo 'id diagnostico' no puede estar vacío") @PathVariable Integer diagnosisId) {
+    public ResponseEntity<DiagnosisResponseDTO> concludeDiagnosis(@NotNull(message = "No se ha enviado una imagen") @RequestPart(name = "image") MultipartFile image, @NotNull(message = "El campo 'id diagnostico' no puede estar vacío") @PathVariable Integer diagnosisId) throws IOException, WriterException {
+        log.info("Request /diagnosis/conclude/"+diagnosisId);
         return ResponseEntity.ok(diagnosisService.concludeDiagnosis(image, diagnosisId));
     }
 

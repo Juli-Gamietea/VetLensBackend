@@ -13,12 +13,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,6 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -74,7 +73,7 @@ public class AuthenticationService {
     }
 
     public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("entre");
+        log.info("entre");
         final String authHeader = request.getHeader("Authorization");
         final String refreshToken;
         final String username;
@@ -82,9 +81,9 @@ public class AuthenticationService {
             return;
         }
         refreshToken = authHeader.substring(7);
-        System.out.println(refreshToken);
+        log.info(refreshToken);
         username = jwtService.extractUsername(refreshToken);
-        System.out.println(username);
+        log.info(username);
 
         if (username != null) {
             var user = this.userRepository.findByUsername(username).orElseThrow();

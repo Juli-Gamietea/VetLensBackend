@@ -7,14 +7,16 @@ import com.api.vetlens.dto.questionary.QuestionDTO;
 import com.api.vetlens.entity.*;
 import com.api.vetlens.entity.questionary.Question;
 import com.api.vetlens.entity.questionary.Questionary;
-import com.api.vetlens.exceptions.ApiException;
 import com.api.vetlens.exceptions.NotFoundException;
 import com.api.vetlens.repository.*;
+import com.google.zxing.WriterException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DiagnosisService {
     private final InferenceService inferenceService;
     private final CloudinaryService cloudinaryService;
@@ -35,9 +38,11 @@ public class DiagnosisService {
     private final DogRepository dogRepository;
     private final DiagnosisValidationRepository diagnosisValidationRepository;
     private final UserService userService;
+    private final QRService qrService;
     private final ModelMapper mapper = new ModelMapper();
 
     public DiagnosisResponseDTO startDiagnosis(DiagnosisRequestDTO request) {
+        log.info("Comenzando el diagnostico...");
         Diagnosis diagnosis = new Diagnosis();
         Anamnesis anamnesis = new Anamnesis();
         LocalDate date = LocalDate.now();
@@ -46,35 +51,44 @@ public class DiagnosisService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = optionalDog.get();
-
+        log.info("Buscando el perro");
         List<Question> questions = mapQuestionsToEntities(request.getQuestions());
         String questionaryId = request.getUsername() + "|" + date + "|" + dog.getName() + "(" + UUID.randomUUID() + ")";
         questionaryRepository.save(new Questionary(questionaryId, questions));
+        log.info("Guardando cuestionario completado en MongoDB");
         anamnesis.setQuestionaryId(questionaryId);
         anamnesis.setInferences(new ArrayList<>());
-
         diagnosis.setAnamnesis(anamnesis);
         diagnosis.setDate(date);
         diagnosis.setDog(dog);
+        log.info("Seteando perro y cuestionario al diagnostico iniciado");
+        log.info("Guardando diagnostico iniciado");
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
-    public DiagnosisResponseDTO concludeDiagnosis(MultipartFile image, Integer diagnosisId) {
+    public DiagnosisResponseDTO concludeDiagnosis(MultipartFile image, Integer diagnosisId) throws IOException, WriterException {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        log.info("Buscando el diagnostico con ID " + diagnosisId );
         if (diagnosisOptional.isEmpty()) {
             throw new NotFoundException("El diagnóstico no existe");
         }
         Diagnosis diagnosis = diagnosisOptional.get();
-        String imageUrl = cloudinaryService.uploadDiagnosisFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
-        diagnosis.setImageUrl(imageUrl);
 
         Anamnesis anamnesis = diagnosis.getAnamnesis();
         anamnesis = inferenceService.makeInference(image, anamnesis);
+        log.info("Inferencia completada");
         anamnesisRepository.save(anamnesis);
         diagnosis.setAnamnesis(anamnesis);
 
-        DiagnosisResponseDTO response = mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
-        return response;
+        String imageUrl = cloudinaryService.uploadDiagnosisFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
+        log.info("Subiendo imagen a Cloudinary");
+        diagnosis.setImageUrl(imageUrl);
+
+        log.info("Generando QR y enviandolo al mail del usuario...");
+        qrService.generateQR(diagnosis, true);
+
+        log.info("Proceso finalizado, devolviendo diagnostico completo...");
+        return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
     public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, Integer userId) {
@@ -141,6 +155,7 @@ public class DiagnosisService {
     }
 
     public List<QuestionDTO> getQuestions() {
+        log.info("Obteniendo y devolviendo preguntas desde MongoDB");
         List<Question> questions = questionRepository.findAll();
         return questions.stream().map(
                 question -> mapper.map(question, QuestionDTO.class)

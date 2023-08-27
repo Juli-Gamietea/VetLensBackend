@@ -30,13 +30,13 @@ public class QRService {
             throw new NotFoundException("Diagnosis no encontrada");
         }
         try {
-            return generateQR(diagnosisOptional.get());
+            return generateQR(diagnosisOptional.get(), false);
         } catch (Exception e) {
             throw new ApiException("Error generando el QR " + e.getMessage());
         }
     }
 
-    private byte[] generateQR(Diagnosis diagnosis) throws WriterException, IOException {
+    protected byte[] generateQR(Diagnosis diagnosis, boolean sendMail) throws WriterException, IOException {
 
         String username = diagnosis.getDog().getOwner().getUsername();
 
@@ -52,7 +52,9 @@ public class QRService {
                 qrCodeBytes
         );
         byte[] qr = file.getBytes();
-        userService.sendEmailWithQR(username, file);
+        if (sendMail) {
+            userService.sendEmailWithQR(username, file);
+        }
         return qr;
     }
 }
