@@ -28,6 +28,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO(exception.getMessage()));
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionDTO> apiException(Exception exception) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO(exception.getMessage()));
+    }
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ExceptionDTO> httpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ExceptionDTO(exception.getMessage()));
