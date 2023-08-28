@@ -16,7 +16,7 @@ public class Inference {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @OneToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "disease_id", referencedColumnName = "id")
     private Disease disease;
     private String probability;

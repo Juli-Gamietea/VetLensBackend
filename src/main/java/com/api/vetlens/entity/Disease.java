@@ -22,6 +22,6 @@ public class Disease {
     private String summary;
     @OneToMany(mappedBy = "disease", fetch = FetchType.EAGER)
     private List<Treatment> treatments;
-    @OneToOne(mappedBy = "disease")
-    private Inference inference;
+    @OneToMany(mappedBy = "disease", fetch = FetchType.EAGER)
+    private List<Inference> inference;
 }
