@@ -1,7 +1,6 @@
 package com.api.vetlens.dto.diagnosis;
 
-import com.api.vetlens.entity.Diagnosis;
-import com.api.vetlens.entity.User;
+import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.entity.Value;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,9 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class DiagnosisValidationDTO {
     private Integer id;
-    private User vet;
+    private UserResponseDTO vet;
     private Value value;
-    private Diagnosis diagnosis;
+    private DiagnosisResponseDTO diagnosis;
     private String notes;
     private String disease;
 }

@@ -163,17 +163,17 @@ public class DiagnosisController {
     @Operation(
             summary = "Obtener validacion de diagnostico por veterinario"
     )
-    @GetMapping("/{diagnosisId}/{userId}")
-    public ResponseEntity<DiagnosisValidationDTO> getDiagnosisValidation(@PathVariable Integer diagnosisId, @PathVariable Integer userId) {
-        return ResponseEntity.ok(diagnosisService.getDiagnosisValidation(diagnosisId, userId));
+    @GetMapping("/{diagnosisId}/{username}")
+    public ResponseEntity<DiagnosisValidationDTO> getDiagnosisValidation(@PathVariable Integer diagnosisId, @PathVariable String username) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisValidation(diagnosisId, username));
     }
 
     @Operation(
-            summary = "Obtener validacion de diagnostico por veterinario y perro"
+            summary = "Obtener validacion de diagnostico por veterinario y estado"
     )
-    @GetMapping("/{vetId}/{value}")
-    public ResponseEntity<List<DiagnosisValidationDTO>> getDiagnosisValidationByVetAndValue(@PathVariable Integer vetId, @PathVariable String value) {
-        return ResponseEntity.ok(diagnosisService.getDiagnosisValidationsByVetAndValue(vetId, value));
+    @GetMapping("/validation/{username}/{validationState}")
+    public ResponseEntity<List<DiagnosisValidationDTO>> getDiagnosisValidationByVetAndValue(@PathVariable String username, @PathVariable String validationState) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisValidationsByVetAndValue(username, validationState));
     }
 
     @Operation(

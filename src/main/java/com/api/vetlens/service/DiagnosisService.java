@@ -91,13 +91,13 @@ public class DiagnosisService {
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
-    public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, Integer userId) {
+    public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, String username) {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
         if(diagnosisOptional.isEmpty()){
             throw new NotFoundException("Diagnóstico no encontrado");
         }
-        User user = userService.getUserById(userId);
-        Optional<DiagnosisValidation> diagnosisValidationOptional = diagnosisValidationRepository.findByVet_IdAndDiagnosis_Id(userId, diagnosisId);
+        User user = userService.getUser(username);
+        Optional<DiagnosisValidation> diagnosisValidationOptional = diagnosisValidationRepository.findByVet_IdAndDiagnosis_Id(user.getId(), diagnosisId);
         if (diagnosisValidationOptional.isEmpty()) {
             DiagnosisValidation validation = DiagnosisValidation.builder()
                     .vet(user)
@@ -129,21 +129,19 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
-    public List<DiagnosisValidationDTO> getDiagnosisValidationsByVetAndValue(Integer userId, String value){
+    public List<DiagnosisValidationDTO> getDiagnosisValidationsByVetAndValue(String username, String value){
         List<DiagnosisValidation> validationsList;
+        User vet = userService.getUser(username);
+
         if(value == null){
-            validationsList = diagnosisValidationRepository.findAllByVet_Id(userId);
-        }else{
-            Value valueEnum = Value.NOT_VALIDATED;
-            switch (value){
-                case "CORRECT":
-                    valueEnum = Value.CORRECT;
-                    break;
-                case "INCORRECT":
-                    valueEnum = Value.INCORRECT;
-                    break;
-            }
-            validationsList = diagnosisValidationRepository.findAllByVet_IdAndValue(userId, valueEnum);
+            validationsList = diagnosisValidationRepository.findAllByVet_Id(vet.getId());
+        } else {
+            Value valueEnum = switch (value) {
+                case "CORRECT" -> Value.CORRECT;
+                case "INCORRECT" -> Value.INCORRECT;
+                default -> Value.NOT_VALIDATED;
+            };
+            validationsList = diagnosisValidationRepository.findAllByVet_IdAndValue(vet.getId(), valueEnum);
         }
 
         if (validationsList.isEmpty()) {
