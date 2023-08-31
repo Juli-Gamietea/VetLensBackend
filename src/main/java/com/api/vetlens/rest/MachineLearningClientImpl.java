@@ -12,15 +12,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 public class MachineLearningClientImpl {
-    @Value("${python.url}")
-    private String url;
+
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     public PredictionDTO makeInference(MultipartFile image) {
         try {
             log.info("Llamando al servicio de Machine Learning para obtener la inferencia...");
             MachineLearningClient fileMachineLearningClient = Feign.builder().encoder(new SpringFormEncoder())
-                    .target(MachineLearningClient.class, "http://localhost:8000/infer/");
+                    .target(MachineLearningClient.class, "http://python-api:8000/infer/");
             Response response = fileMachineLearningClient.makePrediction(image);
             log.info(response.body().toString());
             log.info("Inferencia obtenida");
