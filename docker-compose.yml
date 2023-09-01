@@ -1,0 +1,21 @@
+version: '3'
+services:
+  python-api:
+    image: fransiciliano/vetlens:vetlens-ml-backend
+    container_name: python-api
+    networks:
+      - vetlens-network
+    ports:
+      - "8000:8000"
+
+  java-backend:
+    image: fransiciliano/vetlens:vetlens-backend
+    container_name: java-backend
+    networks:
+      - vetlens-network
+    ports:
+      - "8080:8080"
+
+networks:
+  vetlens-network:
+    driver: bridge
