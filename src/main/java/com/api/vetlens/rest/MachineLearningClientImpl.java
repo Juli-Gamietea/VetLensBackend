@@ -7,7 +7,6 @@ import feign.Feign;
 import feign.Response;
 import feign.form.spring.SpringFormEncoder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j

@@ -17,4 +17,5 @@ public class Question {
     private String question;
     private String help;
     private List<Answer> answers;
+    private String type;
 }

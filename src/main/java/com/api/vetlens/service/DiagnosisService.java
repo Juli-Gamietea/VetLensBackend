@@ -4,6 +4,7 @@ import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
+import com.api.vetlens.dto.questionary.QuestionaryDTO;
 import com.api.vetlens.entity.*;
 import com.api.vetlens.entity.questionary.Question;
 import com.api.vetlens.entity.questionary.Questionary;
@@ -166,4 +167,12 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
+    public QuestionaryDTO getDiagnosisQuestions(Integer diagnosisId) {
+        Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
+        if (diagnosisOptional.isEmpty()) {
+            throw new NotFoundException("El diagnóstico no existe");
+        }
+        Diagnosis diagnosis = diagnosisOptional.get();
+        return mapper.map(questionaryRepository.findById(diagnosis.getAnamnesis().getQuestionaryId()), QuestionaryDTO.class);
+    }
 }
