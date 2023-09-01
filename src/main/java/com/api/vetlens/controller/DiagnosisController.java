@@ -5,8 +5,8 @@ import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
+import com.api.vetlens.dto.questionary.QuestionaryDTO;
 import com.api.vetlens.service.DiagnosisService;
-import com.api.vetlens.service.DiseaseService;
 import com.api.vetlens.service.QRService;
 import com.google.zxing.WriterException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -142,6 +142,14 @@ public class DiagnosisController {
     public ResponseEntity<DiagnosisResponseDTO> concludeDiagnosis(@NotNull(message = "No se ha enviado una imagen") @RequestPart(name = "image") MultipartFile image, @NotNull(message = "El campo 'id diagnostico' no puede estar vacío") @PathVariable Integer diagnosisId) throws IOException, WriterException {
         log.info("Request /diagnosis/conclude/"+diagnosisId);
         return ResponseEntity.ok(diagnosisService.concludeDiagnosis(image, diagnosisId));
+    }
+
+    @Operation(
+            summary = "Obtener preguntas del diagnóstico"
+    )
+    @GetMapping("/questions/{diagnosisId}")
+    public ResponseEntity<QuestionaryDTO> getDiagnosisQuestions(@NotNull(message = "El campo 'id del diagnostico' no puede estar vacío") @PathVariable Integer diagnosisId) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisQuestions(diagnosisId));
     }
 
     @Operation(
