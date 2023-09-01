@@ -92,11 +92,7 @@ public class UserService {
         dog.setOwner(user);
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
-        if (request.getSex().equalsIgnoreCase("MALE")) {
-            dog.setSex(Sex.MALE);
-        } else {
-            dog.setSex(Sex.FEMALE);
-        }
+        dog.setSex(Sex.valueOf(request.getSex()));
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
@@ -110,11 +106,7 @@ public class UserService {
         dog.setDogBreed(request.getDogBreed());
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
-        if (request.getSex().equalsIgnoreCase("MALE")) {
-            dog.setSex(Sex.MALE);
-        } else {
-            dog.setSex(Sex.FEMALE);
-        }
+        dog.setSex(Sex.valueOf(request.getSex()));
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
@@ -180,33 +172,68 @@ public class UserService {
         return mapper.map(getUser(username), UserResponseDTO.class);
     }
 
-    public void sendEmailNewAccount(String email, String password, String user) {
-        emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
-                "<html>" +
-                "<body>" +
-                "   <div style='font-family:sans-serif'>" +
-                "   <h1>¡Bienvenido a VetLens!</h1>" +
-                "   <h2>Su cuenta ha sido creada con exito</h2>" +
-                "<h3>" +
-                "Le informamos que su cuenta fue creada exitosamente, sus credenciales son:" +
-                "</h3>" +
-                "<ul>" +
-                "<li>" +
-                "<h3><u>Usuario</u>: " + user + "</h3>" +
-                "</li>" +
-                "<li>" +
-                "<h3><u>Contraseña</u>: " + password + "</h3>" +
-                "</li> " +
-                "</ul>" +
-                "</p>" +
-                "   <br> " +
-                "<p>" +
-                "Ya puede loguearse y disfrutar de la aplicación. Gracias por unirte a nuestra comunidad de usuarios!" +
-                "</p>" +
-                "<p><b>-VetLens Team</b></p>" +
-                "   </div>" +
-                "</body>" +
-                "</html>");
+    public void sendEmailNewAccount(String email, String password, String user, Role role) {
+        if (role == Role.VET) {
+            emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "<html>\n" +
+                    "\n" +
+                    "<body>\n" +
+                    "    <div>\n" +
+                    "        <h1 style=\"color: #00A6B0\">¡Bienvenido a VetLens!</h1>\n" +
+                    "        <h2>Su cuenta ha sido creada con exito</h2> \n" +
+                    "        <p> \n" +
+                    "            Le informamos que su cuenta fue creada exitosamente, sus credenciales son: \n" +
+                    "        </p> \n" +
+                    "        <ul> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Usuario</u>: " + user + "</p> \n" +
+                    "                </li> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Contraseña</u>:  " + password +  "</p> \n" +
+                    "                </li>  \n" +
+                    "            </ul> \n" +
+                    "        </p> \n" +
+                    "         <br>  \n" +
+                    "        <p> \n" +
+                    "            Sin embargo, aún debemos verificar que su número de matricula sea válida. Es por ello que aún no tendrá acceso a la aplicación." +
+                    " Nos comunicaremos con usted una vez que la verificación haya sido realizada. \n" +
+                    "            </p>\n" +
+                    "        <p><b>Atentamente,</b></p> \n" +
+                    "\n" +
+                    "        <p><b>Equipo de VetLens</b></p> \n" +
+                    "         </div> \n" +
+                    "    </body> \n" +
+                    "\n" +
+                    "\n" +
+                    "</html>");
+        } else {
+            emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
+                    "<html>" +
+                    "<body>" +
+                    "   <div >" +
+                    "   <h1 style='color: #00A6B0'>¡Bienvenido a VetLens!</h1>" +
+                    "   <h2>Su cuenta ha sido creada con exito</h2>" +
+                    "<p>" +
+                    "Le informamos que su cuenta fue creada exitosamente, sus credenciales son:" +
+                    "</p>" +
+                    "<ul>" +
+                    "<li>" +
+                    "<p><u>Usuario</u>: " + user + "</p>" +
+                    "</li>" +
+                    "<li>" +
+                    "<p><u>Contraseña</u>: " + password + "</p>" +
+                    "</li> " +
+                    "</ul>" +
+                    "</p>" +
+                    "   <br> " +
+                    "<p>" +
+                    "Ya puede iniciar sesión en la aplicación y utilizar VetLens. Gracias por registrarte!" +
+                    "</p>" +
+                    "<p><b> Atentamente, </b></p>" +
+                    "<p><b> Equipo de VetLens</b></p>" +
+                    "   </div>" +
+                    "</body>" +
+                    "</html>");
+        }
     }
 
     private void sendEmailChangedPass(String email, String password) {
