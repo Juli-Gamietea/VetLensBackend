@@ -46,15 +46,11 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
-        if (request.getRole().equals("VET")) {
-            user.setRole(Role.VET);
-        }else{
-           user.setRole(Role.DEFAULT);
-        }
+        user.setRole(Role.valueOf(request.getRole()));
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
-        userService.sendEmailNewAccount(request.getEmail(), request.getPassword(), request.getUsername());
+        userService.sendEmailNewAccount(request.getEmail(), request.getPassword(), request.getUsername(), Role.valueOf(request.getRole()));
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
