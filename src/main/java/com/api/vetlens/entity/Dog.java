@@ -35,4 +35,5 @@ public class Dog {
     @OneToMany(mappedBy = "dog", fetch = FetchType.EAGER)
     private List<Diagnosis> diagnoses;
     private String photoUrl;
+    private boolean deleted;
 }

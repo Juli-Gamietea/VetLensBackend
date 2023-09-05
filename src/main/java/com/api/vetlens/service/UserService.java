@@ -93,6 +93,7 @@ public class UserService {
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
         dog.setSex(Sex.valueOf(request.getSex()));
+        dog.setDeleted(false);
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
@@ -141,7 +142,8 @@ public class UserService {
         }
         Dog dog = dogOptional.get();
         cloudinaryService.removeDogPhoto(dog.getName());
-        dogRepository.delete(dog);
+        dog.setDeleted(true);
+        dogRepository.save(dog);
         return new MessageDTO("Perro eliminado");
     }
 
