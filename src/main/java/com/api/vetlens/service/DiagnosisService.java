@@ -130,6 +130,18 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
+    public List<DiagnosisResponseDTO> getRecentDiagnosisByUser (String username) {
+        List<Dog> dogs = userService.getDogsList(username);
+        List<Diagnosis> returnDiganosis = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<Diagnosis> diagnosis = diagnosisRepository.findAllByDog_IdAndDateBetween(dog.getId(), LocalDate.now().minusDays(7), LocalDate.now());
+            returnDiganosis.addAll(diagnosis);
+        }
+        return returnDiganosis.stream().map(
+                diagnosis -> mapper.map(diagnosis, DiagnosisResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+
     public List<DiagnosisValidationDTO> getDiagnosisValidationsByVetAndValue(String username, String value){
         List<DiagnosisValidation> validationsList;
         User vet = userService.getUser(username);

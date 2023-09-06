@@ -226,4 +226,12 @@ public class DiagnosisController {
                 .header("Content-Disposition", "attachment; filename=qr.png")
                 .body(response);
     }
+
+    @Operation(
+            summary = "Obtener los diagnósticos realizados por un usuario en los últimos 7 días"
+    )
+    @GetMapping("/recent/{username}")
+    public ResponseEntity<List<DiagnosisResponseDTO>> getRecentDiagnosisByUser(@PathVariable String username) {
+        return ResponseEntity.ok(diagnosisService.getRecentDiagnosisByUser(username));
+    }
 }
