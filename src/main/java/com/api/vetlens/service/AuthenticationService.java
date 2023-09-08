@@ -24,7 +24,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -69,7 +68,6 @@ public class AuthenticationService {
     }
 
     public void refresh(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        log.info("entre");
         final String authHeader = request.getHeader("Authorization");
         final String refreshToken;
         final String username;
@@ -77,9 +75,7 @@ public class AuthenticationService {
             return;
         }
         refreshToken = authHeader.substring(7);
-        log.info(refreshToken);
         username = jwtService.extractUsername(refreshToken);
-        log.info(username);
 
         if (username != null) {
             var user = this.userRepository.findByUsername(username).orElseThrow();
