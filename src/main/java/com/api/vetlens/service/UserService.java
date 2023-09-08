@@ -153,6 +153,10 @@ public class UserService {
         ).collect(Collectors.toList());
     }
 
+    public List<Dog> getDogsList(String username) {
+        return dogRepository.findAllByOwner(getUser(username));
+    }
+
     public User getUserById(Integer id){
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()){
