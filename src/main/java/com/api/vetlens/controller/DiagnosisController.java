@@ -234,4 +234,12 @@ public class DiagnosisController {
     public ResponseEntity<List<DiagnosisResponseDTO>> getRecentDiagnosisByUser(@PathVariable String username) {
         return ResponseEntity.ok(diagnosisService.getRecentDiagnosisByUser(username));
     }
+
+    @Operation(
+            summary = "Obtener los diagnósticos realizados a todos los perros de un determinado usuario"
+    )
+    @GetMapping("/user/{username}")
+    public ResponseEntity<List<DiagnosisResponseDTO>> getDiagnosisByUser(@PathVariable String username) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisByUser(username));
+    }
 }
