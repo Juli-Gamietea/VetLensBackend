@@ -173,12 +173,6 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
-    private List<Question> mapQuestionsToEntities(List<QuestionDTO> questionDTOS) {
-        return questionDTOS.stream().map(
-                questionDTO -> mapper.map(questionDTO, Question.class)
-        ).collect(Collectors.toList());
-    }
-
     public QuestionaryDTO getDiagnosisQuestions(Integer diagnosisId) {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
         if (diagnosisOptional.isEmpty()) {
@@ -186,5 +180,22 @@ public class DiagnosisService {
         }
         Diagnosis diagnosis = diagnosisOptional.get();
         return mapper.map(questionaryRepository.findById(diagnosis.getAnamnesis().getQuestionaryId()), QuestionaryDTO.class);
+    }
+
+    public List<DiagnosisResponseDTO> getDiagnosisByUser(String username) {
+        List<Dog> dogs = userService.getDogsList(username);
+        List<Diagnosis> returnDiagnosis = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<Diagnosis> diagnosis = diagnosisRepository.findAllByDog_Id(dog.getId());
+            returnDiagnosis.addAll(diagnosis);
+        }
+        return returnDiagnosis.stream().map(
+                diagnosis -> mapper.map(diagnosis, DiagnosisResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+    private List<Question> mapQuestionsToEntities(List<QuestionDTO> questionDTOS) {
+        return questionDTOS.stream().map(
+                questionDTO -> mapper.map(questionDTO, Question.class)
+        ).collect(Collectors.toList());
     }
 }
