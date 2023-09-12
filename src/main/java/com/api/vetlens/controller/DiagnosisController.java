@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -218,13 +219,10 @@ public class DiagnosisController {
             }
     )
     @GetMapping("/qr/{diagnosisId}")
-    public ResponseEntity<byte[]> getQr(@PathVariable Integer diagnosisId) {
+    public ResponseEntity<String> getQr(@PathVariable Integer diagnosisId) {
         byte[] response = qrService.getQr(diagnosisId);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .contentLength(response.length)
-                .header("Content-Disposition", "attachment; filename=qr.png")
-                .body(response);
+        String base64Response = Base64.encodeBase64String(response);
+        return ResponseEntity.ok(base64Response);
     }
 
     @Operation(
