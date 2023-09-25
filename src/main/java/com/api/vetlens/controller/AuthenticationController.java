@@ -99,4 +99,20 @@ public class AuthenticationController {
     public boolean checkUsernameAvailability(@PathVariable String username) {
         return userService.checkUsernameAvailability(username);
     }
+
+    @Operation(
+            summary = "Restaurar contraseña"
+    )
+    @PutMapping("/password/restore/{username}")
+    public ResponseEntity<MessageDTO> forgotPassword(@PathVariable String username) {
+        return ResponseEntity.ok(userService.forgotPassword(username));
+    }
+
+    @Operation(
+            summary = "Actualizar contraseña"
+    )
+    @PutMapping("/password/{username}/{oldPassword}/{newPassword}")
+    public ResponseEntity<MessageDTO> changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
+        return ResponseEntity.ok(userService.changePassword(username, oldPassword, newPassword));
+    }
 }
