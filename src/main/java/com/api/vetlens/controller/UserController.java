@@ -78,6 +78,13 @@ public class UserController {
     }
 
     @Operation(
+            summary = "Actualizar contraseña"
+    )
+    @PutMapping("/password/{username}/{oldPassword}/{newPassword}")
+    public ResponseEntity<MessageDTO> changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
+        return ResponseEntity.ok(userService.changePassword(username, oldPassword, newPassword));
+    }
+    @Operation(
             summary = "Agregar perro"
     )
     @PostMapping("/dog/add")
