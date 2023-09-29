@@ -3,7 +3,8 @@ package com.api.vetlens.controller;
 import com.api.vetlens.dto.MessageDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
-import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
+import com.api.vetlens.dto.diagnosis.DiagnosisValidationRequestDTO;
+import com.api.vetlens.dto.diagnosis.DiagnosisValidationResponseDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
 import com.api.vetlens.dto.questionary.QuestionaryDTO;
 import com.api.vetlens.service.DiagnosisService;
@@ -19,7 +20,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -173,7 +173,7 @@ public class DiagnosisController {
             summary = "Obtener validacion de diagnostico por veterinario"
     )
     @GetMapping("/{diagnosisId}/{username}")
-    public ResponseEntity<DiagnosisValidationDTO> getDiagnosisValidation(@PathVariable Integer diagnosisId, @PathVariable String username) {
+    public ResponseEntity<DiagnosisValidationResponseDTO> getDiagnosisValidation(@PathVariable Integer diagnosisId, @PathVariable String username) {
         return ResponseEntity.ok(diagnosisService.getDiagnosisValidation(diagnosisId, username));
     }
 
@@ -181,7 +181,7 @@ public class DiagnosisController {
             summary = "Obtener validacion de diagnostico por veterinario y estado"
     )
     @GetMapping("/validation/{username}/{validationState}")
-    public ResponseEntity<List<DiagnosisValidationDTO>> getDiagnosisValidationByVetAndValue(@PathVariable String username, @PathVariable String validationState) {
+    public ResponseEntity<List<DiagnosisValidationResponseDTO>> getDiagnosisValidationByVetAndValue(@PathVariable String username, @PathVariable String validationState) {
         return ResponseEntity.ok(diagnosisService.getDiagnosisValidationsByVetAndValue(username, validationState));
     }
 
@@ -239,5 +239,21 @@ public class DiagnosisController {
     @GetMapping("/user/{username}")
     public ResponseEntity<List<DiagnosisResponseDTO>> getDiagnosisByUser(@PathVariable String username) {
         return ResponseEntity.ok(diagnosisService.getDiagnosisByUser(username));
+    }
+
+    @Operation(
+            summary = "Obtener todas las validaciones de un diagnóstico"
+    )
+    @GetMapping("/validations/{diagnosisId}")
+    public ResponseEntity<List<DiagnosisValidationResponseDTO>> getValidationsByDiagnosis(@PathVariable Integer diagnosisId) {
+        return ResponseEntity.ok(diagnosisService.getDiagnosisValidationByDiagnosis(diagnosisId));
+    }
+
+    @Operation(
+            summary = "Validar un diagnóstico"
+    )
+    @PutMapping("/validate")
+    public ResponseEntity<DiagnosisValidationResponseDTO> validateDiagnosis(@RequestBody DiagnosisValidationRequestDTO diagnosisValidation) {
+        return ResponseEntity.ok(diagnosisService.validateDiagnosis(diagnosisValidation));
     }
 }
