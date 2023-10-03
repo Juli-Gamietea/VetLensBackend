@@ -100,15 +100,17 @@ public class DiagnosisService {
         }
         User user = userService.getUser(username);
         Optional<DiagnosisValidation> diagnosisValidationOptional = diagnosisValidationRepository.findByVet_IdAndDiagnosis_Id(user.getId(), diagnosisId);
-        if (diagnosisValidationOptional.isEmpty()) {
-            DiagnosisValidation validation = DiagnosisValidation.builder()
-                    .vet(user)
-                    .diagnosis(diagnosisOptional.get())
-                    .notes(null)
-                    .disease(null)
-                    .value(Value.NOT_VALIDATED)
-                    .build();
-            return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationResponseDTO.class);
+        if (user.getRole() == Role.VET) {
+            if (diagnosisValidationOptional.isEmpty()) {
+                DiagnosisValidation validation = DiagnosisValidation.builder()
+                        .vet(user)
+                        .diagnosis(diagnosisOptional.get())
+                        .notes(null)
+                        .disease(null)
+                        .value(Value.NOT_VALIDATED)
+                        .build();
+                return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationResponseDTO.class);
+            }
         }
         return mapper.map(diagnosisValidationOptional.get(), DiagnosisValidationResponseDTO.class);
     }
