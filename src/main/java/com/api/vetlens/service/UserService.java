@@ -5,6 +5,7 @@ import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
+import com.api.vetlens.dto.user.UserUpdateRequestDTO;
 import com.api.vetlens.entity.Dog;
 import com.api.vetlens.entity.Role;
 import com.api.vetlens.entity.Sex;
@@ -39,7 +40,7 @@ public class UserService {
     private final EmailService emailService;
     private ModelMapper mapper = new ModelMapper();
 
-    public UserResponseDTO update(UserRequestDTO request) {
+    public UserResponseDTO update(UserUpdateRequestDTO request) {
         Optional<User> userOptional = userRepository.findByUsername(request.getUsername());
         if (userOptional.isPresent()) {
             User user = userOptional.get();
