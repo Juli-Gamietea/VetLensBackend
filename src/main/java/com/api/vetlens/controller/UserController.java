@@ -5,6 +5,7 @@ import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
+import com.api.vetlens.dto.user.UserUpdateRequestDTO;
 import com.api.vetlens.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,7 +66,7 @@ public class UserController {
             }
     )
     @PutMapping
-    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody @Valid UserRequestDTO request) {
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody @Valid UserUpdateRequestDTO request) {
         return ResponseEntity.ok(userService.update(request));
     }
 
