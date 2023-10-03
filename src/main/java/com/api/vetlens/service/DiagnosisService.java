@@ -2,7 +2,8 @@ package com.api.vetlens.service;
 
 import com.api.vetlens.dto.diagnosis.DiagnosisRequestDTO;
 import com.api.vetlens.dto.diagnosis.DiagnosisResponseDTO;
-import com.api.vetlens.dto.diagnosis.DiagnosisValidationDTO;
+import com.api.vetlens.dto.diagnosis.DiagnosisValidationRequestDTO;
+import com.api.vetlens.dto.diagnosis.DiagnosisValidationResponseDTO;
 import com.api.vetlens.dto.questionary.QuestionDTO;
 import com.api.vetlens.dto.questionary.QuestionaryDTO;
 import com.api.vetlens.entity.*;
@@ -92,24 +93,26 @@ public class DiagnosisService {
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 
-    public DiagnosisValidationDTO getDiagnosisValidation(Integer diagnosisId, String username) {
+    public DiagnosisValidationResponseDTO getDiagnosisValidation(Integer diagnosisId, String username) {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
         if(diagnosisOptional.isEmpty()){
             throw new NotFoundException("Diagnóstico no encontrado");
         }
         User user = userService.getUser(username);
         Optional<DiagnosisValidation> diagnosisValidationOptional = diagnosisValidationRepository.findByVet_IdAndDiagnosis_Id(user.getId(), diagnosisId);
-        if (diagnosisValidationOptional.isEmpty()) {
-            DiagnosisValidation validation = DiagnosisValidation.builder()
-                    .vet(user)
-                    .diagnosis(diagnosisOptional.get())
-                    .notes(null)
-                    .disease(null)
-                    .value(Value.NOT_VALIDATED)
-                    .build();
-            return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationDTO.class);
+        if (user.getRole() == Role.VET) {
+            if (diagnosisValidationOptional.isEmpty()) {
+                DiagnosisValidation validation = DiagnosisValidation.builder()
+                        .vet(user)
+                        .diagnosis(diagnosisOptional.get())
+                        .notes(null)
+                        .disease(null)
+                        .value(Value.NOT_VALIDATED)
+                        .build();
+                return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationResponseDTO.class);
+            }
         }
-        return mapper.map(diagnosisValidationOptional.get(), DiagnosisValidationDTO.class);
+        return mapper.map(diagnosisValidationOptional.get(), DiagnosisValidationResponseDTO.class);
     }
 
     public DiagnosisResponseDTO getDiagnosisById(Integer id) {
@@ -130,7 +133,19 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
-    public List<DiagnosisValidationDTO> getDiagnosisValidationsByVetAndValue(String username, String value){
+    public List<DiagnosisResponseDTO> getRecentDiagnosisByUser (String username) {
+        List<Dog> dogs = userService.getDogsList(username);
+        List<Diagnosis> returnDiganosis = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<Diagnosis> diagnosis = diagnosisRepository.findAllByDog_IdAndDateBetween(dog.getId(), LocalDate.now().minusDays(7), LocalDate.now());
+            returnDiganosis.addAll(diagnosis);
+        }
+        return returnDiganosis.stream().map(
+                diagnosis -> mapper.map(diagnosis, DiagnosisResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+
+    public List<DiagnosisValidationResponseDTO> getDiagnosisValidationsByVetAndValue(String username, String value){
         List<DiagnosisValidation> validationsList;
         User vet = userService.getUser(username);
 
@@ -149,7 +164,7 @@ public class DiagnosisService {
             throw new NotFoundException("El veterinario no posee diagnósticos");
         }
         return validationsList.stream().map(
-                validation -> mapper.map(validation, DiagnosisValidationDTO.class)
+                validation -> mapper.map(validation, DiagnosisValidationResponseDTO.class)
         ).collect(Collectors.toList());
     }
 
@@ -161,12 +176,6 @@ public class DiagnosisService {
         ).collect(Collectors.toList());
     }
 
-    private List<Question> mapQuestionsToEntities(List<QuestionDTO> questionDTOS) {
-        return questionDTOS.stream().map(
-                questionDTO -> mapper.map(questionDTO, Question.class)
-        ).collect(Collectors.toList());
-    }
-
     public QuestionaryDTO getDiagnosisQuestions(Integer diagnosisId) {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
         if (diagnosisOptional.isEmpty()) {
@@ -174,5 +183,38 @@ public class DiagnosisService {
         }
         Diagnosis diagnosis = diagnosisOptional.get();
         return mapper.map(questionaryRepository.findById(diagnosis.getAnamnesis().getQuestionaryId()), QuestionaryDTO.class);
+    }
+
+    public List<DiagnosisResponseDTO> getDiagnosisByUser(String username) {
+        List<Dog> dogs = userService.getDogsList(username);
+        List<Diagnosis> returnDiagnosis = new ArrayList<>();
+        for (Dog dog : dogs) {
+            List<Diagnosis> diagnosis = diagnosisRepository.findAllByDog_Id(dog.getId());
+            returnDiagnosis.addAll(diagnosis);
+        }
+        return returnDiagnosis.stream().map(
+                diagnosis -> mapper.map(diagnosis, DiagnosisResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+    private List<Question> mapQuestionsToEntities(List<QuestionDTO> questionDTOS) {
+        return questionDTOS.stream().map(
+                questionDTO -> mapper.map(questionDTO, Question.class)
+        ).collect(Collectors.toList());
+    }
+
+    public List<DiagnosisValidationResponseDTO> getDiagnosisValidationByDiagnosis(int diagnosisId){
+        List<DiagnosisValidation> validations = diagnosisValidationRepository.findAllByDiagnosis_Id(diagnosisId);
+
+        return validations.stream().map(
+                validationDTO -> mapper.map(validationDTO, DiagnosisValidationResponseDTO.class)
+        ).collect(Collectors.toList());
+    }
+
+    public DiagnosisValidationResponseDTO validateDiagnosis(DiagnosisValidationRequestDTO validationDTO) {
+        DiagnosisValidation validation = diagnosisValidationRepository.findById(validationDTO.getId()).orElseThrow(() -> new NotFoundException("La validación no existe"));
+        validation.setDisease(validationDTO.getDisease());
+        validation.setNotes(validationDTO.getNotes());
+        validation.setValue(Value.valueOf(validationDTO.getValue()));
+        return mapper.map(diagnosisValidationRepository.save(validation), DiagnosisValidationResponseDTO.class);
     }
 }

@@ -5,6 +5,7 @@ import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
+import com.api.vetlens.dto.user.UserUpdateRequestDTO;
 import com.api.vetlens.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,7 +66,7 @@ public class UserController {
             }
     )
     @PutMapping
-    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody @Valid UserRequestDTO request) {
+    public ResponseEntity<UserResponseDTO> updateUser(@RequestBody @Valid UserUpdateRequestDTO request) {
         return ResponseEntity.ok(userService.update(request));
     }
 
@@ -84,15 +85,6 @@ public class UserController {
     public ResponseEntity<MessageDTO> changePassword(@PathVariable String username, @PathVariable String oldPassword, @PathVariable String newPassword) {
         return ResponseEntity.ok(userService.changePassword(username, oldPassword, newPassword));
     }
-
-    @Operation(
-            summary = "Restaurar contraseña"
-    )
-    @PutMapping("/password/restore/{username}")
-    public ResponseEntity<MessageDTO> forgotPassword(@PathVariable String username) {
-        return ResponseEntity.ok(userService.forgotPassword(username));
-    }
-
     @Operation(
             summary = "Agregar perro"
     )

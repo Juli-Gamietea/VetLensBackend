@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DiagnosisValidationDTO {
+public class DiagnosisValidationResponseDTO {
     private Integer id;
     private UserResponseDTO vet;
     private Value value;
