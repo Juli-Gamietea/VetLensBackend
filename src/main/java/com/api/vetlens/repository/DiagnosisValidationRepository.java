@@ -11,4 +11,5 @@ public interface DiagnosisValidationRepository extends JpaRepository<DiagnosisVa
     List<DiagnosisValidation> findAllByVet_Id(Integer userId);
     List<DiagnosisValidation> findAllByVet_IdAndValue(Integer userId, Value value);
     Optional<DiagnosisValidation> findByVet_IdAndDiagnosis_Id(Integer userId, Integer diagnosisId);
+    List<DiagnosisValidation> findAllByDiagnosis_Id(Integer diagnosisId);
 }
