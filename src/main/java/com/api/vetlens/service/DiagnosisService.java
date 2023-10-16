@@ -49,11 +49,12 @@ public class DiagnosisService {
         Anamnesis anamnesis = new Anamnesis();
         LocalDate date = LocalDate.now();
         Optional<Dog> optionalDog = dogRepository.findById(request.getDogId());
+        log.info("Buscando el perro");
         if (optionalDog.isEmpty()) {
+            log.error("El perro no existe");
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = optionalDog.get();
-        log.info("Buscando el perro");
         List<Question> questions = mapQuestionsToEntities(request.getQuestions());
         String questionaryId = request.getUsername() + "|" + date + "|" + dog.getName() + "(" + UUID.randomUUID() + ")";
         questionaryRepository.save(new Questionary(questionaryId, questions));
@@ -72,6 +73,7 @@ public class DiagnosisService {
         Optional<Diagnosis> diagnosisOptional = diagnosisRepository.findById(diagnosisId);
         log.info("Buscando el diagnostico con ID " + diagnosisId );
         if (diagnosisOptional.isEmpty()) {
+            log.error("No se encontró el diagnóstico");
             throw new NotFoundException("El diagnóstico no existe");
         }
         Diagnosis diagnosis = diagnosisOptional.get();
@@ -89,7 +91,7 @@ public class DiagnosisService {
         log.info("Generando QR y enviandolo al mail del usuario...");
         qrService.generateQR(diagnosis, true);
 
-        log.info("Proceso finalizado, devolviendo diagnostico completo...");
+        log.info("Proceso finalizado, devolviendo diagnóstico completo...");
         return mapper.map(diagnosisRepository.save(diagnosis), DiagnosisResponseDTO.class);
     }
 

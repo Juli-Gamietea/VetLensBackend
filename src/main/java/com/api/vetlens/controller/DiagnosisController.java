@@ -98,7 +98,7 @@ public class DiagnosisController {
     )
     @PostMapping("/start")
     public ResponseEntity<DiagnosisResponseDTO> startDiagnosis(@RequestBody @Valid DiagnosisRequestDTO request) {
-        log.info("Request /diagnosis/start");
+        log.info("Request recibida en /diagnosis/start");
         return ResponseEntity.ok(diagnosisService.startDiagnosis(request));
     }
 
@@ -141,7 +141,7 @@ public class DiagnosisController {
     )
     @PostMapping("/conclude/{diagnosisId}")
     public ResponseEntity<DiagnosisResponseDTO> concludeDiagnosis(@NotNull(message = "No se ha enviado una imagen") @RequestPart(name = "image") MultipartFile image, @NotNull(message = "El campo 'id diagnostico' no puede estar vacío") @PathVariable Integer diagnosisId) throws IOException, WriterException {
-        log.info("Request /diagnosis/conclude/"+diagnosisId);
+        log.info("Request recibida en /diagnosis/conclude/ para el diagnóstico de ID: " + diagnosisId);
         return ResponseEntity.ok(diagnosisService.concludeDiagnosis(image, diagnosisId));
     }
 

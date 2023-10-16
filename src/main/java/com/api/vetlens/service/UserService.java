@@ -3,7 +3,6 @@ package com.api.vetlens.service;
 import com.api.vetlens.dto.*;
 import com.api.vetlens.dto.dog.DogRequestDTO;
 import com.api.vetlens.dto.dog.DogResponseDTO;
-import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.dto.user.UserUpdateRequestDTO;
 import com.api.vetlens.entity.Dog;
@@ -16,6 +15,7 @@ import com.api.vetlens.repository.DogRepository;
 import com.api.vetlens.repository.UserRepository;
 import com.github.javafaker.Faker;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -84,6 +84,7 @@ public class UserService {
     }
 
     public DogResponseDTO addDog(DogRequestDTO request) {
+        log.info("Buscando el dueño");
         User user = getUser(request.getOwnerUsername());
         Dog dog = new Dog();
         dog.setDogBreed(request.getDogBreed());
@@ -94,6 +95,7 @@ public class UserService {
         dog.setSex(Sex.valueOf(request.getSex()));
         dog.setPhotoUrl("https://res.cloudinary.com/db3ti85we/image/upload/v1693880401/vetlens.png");
         dog.setDeleted(false);
+        log.info("Seteando información del perro y guardandolo en la base de datos");
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
@@ -169,8 +171,10 @@ public class UserService {
     public User getUser(String username){
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()){
+            log.error("El dueño no fue encontrado");
             throw new NotFoundException("Usuario " + username + " no encontrado");
         }
+        log.info("Se encontró el dueño");
         return userOptional.get();
     }
 

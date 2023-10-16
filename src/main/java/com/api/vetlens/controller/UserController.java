@@ -14,13 +14,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/users")
 @Tag(name = "User Controller")
@@ -90,6 +91,7 @@ public class UserController {
     )
     @PostMapping("/dog/add")
     public ResponseEntity<DogResponseDTO> addDog(@RequestBody @Valid DogRequestDTO request) {
+        log.info("Request recibida en /dog/add");
         return ResponseEntity.ok(userService.addDog(request));
     }
 

@@ -24,6 +24,7 @@ public class MachineLearningClientImpl {
             log.info("Inferencia obtenida");
             return MAPPER.readValue(response.body().toString(), PredictionDTO.class);
         } catch (Exception e) {
+            log.error("Ocurrió un problema obteniendo la inferencia");
             throw new ApiException("Ocurrió un problema obteniendo la inferencia");
         }
     }
