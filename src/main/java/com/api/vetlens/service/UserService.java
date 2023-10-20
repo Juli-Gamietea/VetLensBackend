@@ -171,10 +171,10 @@ public class UserService {
     public User getUser(String username){
         Optional<User> userOptional = userRepository.findByUsername(username);
         if (userOptional.isEmpty()){
-            log.error("El dueño no fue encontrado");
+            log.error("El usuario no fue encontrado");
             throw new NotFoundException("Usuario " + username + " no encontrado");
         }
-        log.info("Se encontró el dueño");
+        log.info("Se encontró el usuario");
         return userOptional.get();
     }
 
