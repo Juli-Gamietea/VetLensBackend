@@ -1,7 +1,7 @@
 # VetLensBackend
 Este repositorio es el backend para la aplicación VetLens, el mismo esta desarrollado utilizando Java y Spring Boot.
-Se recomienda tener instalado un IDE para facilitar la lectura del código y ejecución del mismo, el utilizado en el desarrollo fue Intellij IDEA
-Para poder utilizar la aplicación usted debe
+Se recomienda tener instalado un IDE para facilitar la lectura del código y ejecución del mismo, el utilizado en el desarrollo fue Intellij IDEA.
+Para poder utilizar la aplicación usted debe:
 1. Tener instalado Git, MySQL y Java 17
 2. Descargar el repositorio en la ruta en la que se encuentra en su dispositivo mediante 'git clone https://github.com/Juli-Gamietea/VetLensBackend.git'
 3. Asegurarse de encontrarse sobre la branch 'main' (con git checkout main en caso de no estarlo)
@@ -13,6 +13,9 @@ spring.datasource.username=root
 spring.datasource.password=root
 ```
 5. Correr el archivo [VetlensApplication.java](https://github.com/Juli-Gamietea/VetLensBackend/blob/main/src/main/java/com/api/vetlens/VetlensApplication.java)
+
+> Los distintos endpoints de la aplicación se disponibilizarán en /swagger-ui.html. Por ejemplo si corre la aplicación en el puerto 8080 el link al Swagger será:
+> localhost:8080/swagger-ui.html
 
 ## Consideraciones
 Al estar en etapa de desarrollo la aplicación se encuentra consumiendo servicios web de capa gratuita (Mongo DBAtlas y Cloudinary) por lo cual se pide encarecidamente que
