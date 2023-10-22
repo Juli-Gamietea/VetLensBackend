@@ -20,3 +20,11 @@ spring.datasource.password=root
 ## Consideraciones
 Al estar en etapa de desarrollo la aplicación se encuentra consumiendo servicios web de capa gratuita (Mongo DBAtlas y Cloudinary) por lo cual se pide encarecidamente que
 el tráfico de prueba sea moderado para poder mantenerse dentro de los valores suministrados gratuitamente por el proveedor.
+
+## Contenerización
+En el repositorio se encuentra un Dockerfile a partir del cuál puede construirse rápidamente una imagen del servicio, que permitirá correr el servidor de forma rápida e independiente de la máquina en la que se encuentra.
+
+Para ello, primero se debe contar con Docker instalado en el dispositivo, y luego se deben ejecutar los siguientes comandos:
+
+1. En el directorio donde se encuentra el Dockerfile correr: `docker build -t java-backend .`
+2. Ejecutar el comando: `docker run -dp 127.0.0.1:8000:8000 java-backend`
