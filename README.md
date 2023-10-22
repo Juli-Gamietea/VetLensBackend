@@ -1,3 +1,9 @@
+# Información académica
+Este repositorio forma parte del Proyecto Final de Ingeniería de los estudiantes Gamietea Julián y Siciliano Franco de la carrera Ingeniería en Informática de la Universidad Argentina de la Empresa. Contactos: 
+
+Julián Gamietea: jgamietea@uade.edu.ar
+
+Franco Siciliano: frsiciliano@uade.edu.ar
 # VetLensBackend
 Este repositorio es el backend para la aplicación VetLens, el mismo esta desarrollado utilizando Java y Spring Boot.
 Se recomienda tener instalado un IDE para facilitar la lectura del código y ejecución del mismo, el utilizado en el desarrollo fue Intellij IDEA.
