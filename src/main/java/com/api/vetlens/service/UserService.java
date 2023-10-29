@@ -174,7 +174,6 @@ public class UserService {
             log.error("El usuario no fue encontrado");
             throw new NotFoundException("Usuario " + username + " no encontrado");
         }
-        log.info("Se encontró el usuario");
         return userOptional.get();
     }
 

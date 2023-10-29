@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
@@ -50,6 +51,7 @@ public class AuthenticationService {
         var jwtToken = jwtService.generateToken(user);
         var refreshToken = jwtService.generateRefreshToken(user);
         userService.sendEmailNewAccount(request.getEmail(), request.getPassword(), request.getUsername(), Role.valueOf(request.getRole()));
+        log.info("Usuario " + request.getUsername() + " creado con éxito.");
         return AuthenticationResponseDTO.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
