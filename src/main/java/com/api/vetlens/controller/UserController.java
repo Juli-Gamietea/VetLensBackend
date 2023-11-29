@@ -135,9 +135,4 @@ public class UserController {
     public ResponseEntity<MessageDTO> removeDog(@PathVariable Integer idDog) {
         return ResponseEntity.ok(userService.removeDog(idDog));
     }
-
-    @PutMapping("/student/{idUser}/file")
-    public ResponseEntity<MessageDTO> addUserFile(@RequestPart(name = "file") MultipartFile file, @PathVariable Integer idUser) {
-        return ResponseEntity.ok(userService.uploadFile(file, idUser));
-    }
 }
