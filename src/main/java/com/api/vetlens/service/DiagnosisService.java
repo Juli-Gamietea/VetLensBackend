@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DiagnosisService {
     private final InferenceService inferenceService;
-    private final CloudinaryService cloudinaryService;
+    private final S3Service s3Service;
     private final DiagnosisRepository diagnosisRepository;
     private final QuestionaryRepository questionaryRepository;
     private final QuestionRepository questionRepository;
@@ -84,8 +84,9 @@ public class DiagnosisService {
         anamnesisRepository.save(anamnesis);
         diagnosis.setAnamnesis(anamnesis);
 
-        String imageUrl = cloudinaryService.uploadDiagnosisFile(image, diagnosis.getDog().getOwner().getUsername(), diagnosis.getDog().getName());
-        log.info("Subiendo imagen a Cloudinary");
+        String imageId = diagnosis.getDog().getOwner().getUsername() + "|" + LocalDate.now() + "|" + diagnosis.getDog().getName() + "(" + UUID.randomUUID() + ")";
+        String imageUrl = s3Service.upload(imageId, image);
+        log.info("Subiendo imagen a S3");
         diagnosis.setImageUrl(imageUrl);
 
         log.info("Generando QR y enviandolo al mail del usuario...");

@@ -6,6 +6,7 @@ import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.dto.user.UserUpdateRequestDTO;
+import com.api.vetlens.service.S3Service;
 import com.api.vetlens.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -133,5 +134,10 @@ public class UserController {
     @DeleteMapping("/dog/remove/{idDog}")
     public ResponseEntity<MessageDTO> removeDog(@PathVariable Integer idDog) {
         return ResponseEntity.ok(userService.removeDog(idDog));
+    }
+
+    @PutMapping("/student/{idUser}/file")
+    public ResponseEntity<MessageDTO> addUserFile(@RequestPart(name = "file") MultipartFile file, @PathVariable Integer idUser) {
+        return ResponseEntity.ok(userService.uploadFile(file, idUser));
     }
 }

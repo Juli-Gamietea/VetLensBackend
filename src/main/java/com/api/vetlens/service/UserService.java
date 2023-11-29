@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 @Slf4j
 @Service
@@ -35,7 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DogRepository dogRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CloudinaryService cloudinaryService;
+    private final S3Service s3Service;
     private final Faker faker;
     private final EmailService emailService;
     private ModelMapper mapper = new ModelMapper();
@@ -99,6 +100,11 @@ public class UserService {
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
+    public MessageDTO uploadFile (MultipartFile multipartFile, Integer userId) {
+        s3Service.upload("user-" + userId + "-file ID: (" + UUID.randomUUID() + ")", multipartFile);
+        return new MessageDTO("Se subió el archivo correctamente");
+    }
+
     public DogResponseDTO updateDog(DogRequestDTO request) {
         getUser(request.getOwnerUsername());
         Optional<Dog> dogOptional = dogRepository.findByName(request.getName());
@@ -119,7 +125,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        String photoUrl = cloudinaryService.uploadDogPhoto(photo, dog.getName());
+        String photoUrl = s3Service.upload("profile-" + dog.getName(), photo);
         dog.setPhotoUrl(photoUrl);
         dogRepository.save(dog);
         return new MessageDTO(photoUrl);
@@ -131,7 +137,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        cloudinaryService.removeDogPhoto(dog.getName());
+        s3Service.removeDogPhoto(dog.getName());
         dog.setPhotoUrl(null);
         dogRepository.save(dog);
         return new MessageDTO("Foto eliminada");
@@ -143,7 +149,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        cloudinaryService.removeDogPhoto(dog.getName());
+        s3Service.removeDogPhoto(dog.getName());
         dog.setDeleted(true);
         dogRepository.save(dog);
         return new MessageDTO("Perro eliminado");
