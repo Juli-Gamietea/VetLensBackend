@@ -94,7 +94,7 @@ public class UserService {
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
         dog.setSex(Sex.valueOf(request.getSex()));
-        dog.setPhotoUrl("https://res.cloudinary.com/db3ti85we/image/upload/v1693880401/vetlens.png");
+        dog.setPhotoUrl("https://vetlens.s3.sa-east-1.amazonaws.com/vetlens.png");
         dog.setDeleted(false);
         log.info("Seteando información del perro y guardandolo en la base de datos");
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);

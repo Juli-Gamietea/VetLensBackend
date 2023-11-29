@@ -48,7 +48,7 @@ INSERT INTO treatments(name, source, summary, disease_id) VALUES
 
 
 ## Consideraciones
-Al estar en etapa de desarrollo la aplicación se encuentra consumiendo servicios web de capa gratuita (Mongo DBAtlas y Cloudinary) por lo cual se pide encarecidamente que
+Al estar en etapa de desarrollo la aplicación se encuentra consumiendo servicios web de capa gratuita (Mongo DBAtlas y S3) por lo cual se pide encarecidamente que
 el tráfico de prueba sea moderado para poder mantenerse dentro de los valores suministrados gratuitamente por el proveedor.
 
 ## Contenerización

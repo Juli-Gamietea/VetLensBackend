@@ -107,16 +107,6 @@
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-http44</artifactId>
-			<version>1.32.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.cloudinary</groupId>
-			<artifactId>cloudinary-taglib</artifactId>
-			<version>1.32.2</version>
-		</dependency>
-		<dependency>
 			<groupId>com.github.hiwepy</groupId>
 			<artifactId>zxing-spring-boot-starter</artifactId>
 			<version>2.0.0.RELEASE</version>
