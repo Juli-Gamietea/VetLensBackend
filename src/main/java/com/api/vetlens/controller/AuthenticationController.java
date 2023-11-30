@@ -108,8 +108,8 @@ public class AuthenticationController {
     public ResponseEntity<MessageDTO> forgotPassword(@PathVariable String username) {
         return ResponseEntity.ok(userService.forgotPassword(username));
     }
-    @PutMapping("/student/{idUser}/file")
-    public ResponseEntity<MessageDTO> addUserFile(@RequestPart(name = "file") MultipartFile file, @PathVariable Integer idUser) {
-        return ResponseEntity.ok(userService.uploadFile(file, idUser));
+    @PutMapping("/student/{username}/file")
+    public ResponseEntity<MessageDTO> addUserFile(@RequestPart(name = "file") MultipartFile file, @PathVariable String username) {
+        return ResponseEntity.ok(userService.uploadFile(file, username));
     }
 }

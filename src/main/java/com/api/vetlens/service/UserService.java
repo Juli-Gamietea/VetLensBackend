@@ -100,8 +100,8 @@ public class UserService {
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
     }
 
-    public MessageDTO uploadFile (MultipartFile multipartFile, Integer userId) {
-        s3Service.upload("user-" + userId + "-file ID: (" + UUID.randomUUID() + ")", multipartFile);
+    public MessageDTO uploadFile (MultipartFile multipartFile, String username) {
+        s3Service.upload("user-" + userRepository.findByUsername(username).get().getId() + "-file ID: (" + UUID.randomUUID() + ")", multipartFile);
         return new MessageDTO("Se subió el archivo correctamente");
     }
 
@@ -220,7 +220,40 @@ public class UserService {
                     "\n" +
                     "\n" +
                     "</html>");
-        } else {
+        } else if (role == Role.STUDENT) {
+            emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "<html>\n" +
+                    "\n" +
+                    "<body>\n" +
+                    "    <div>\n" +
+                    "        <h1 style=\"color: #00A6B0\">¡Bienvenido a VetLens!</h1>\n" +
+                    "        <h2>Su cuenta ha sido creada con exito</h2> \n" +
+                    "        <p> \n" +
+                    "            Le informamos que su cuenta fue creada exitosamente, sus credenciales son: \n" +
+                    "        </p> \n" +
+                    "        <ul> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Usuario</u>: " + user + "</p> \n" +
+                    "                </li> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Contraseña</u>:  " + password +  "</p> \n" +
+                    "                </li>  \n" +
+                    "            </ul> \n" +
+                    "        </p> \n" +
+                    "         <br>  \n" +
+                    "        <p> \n" +
+                    "            Sin embargo, aún debemos verificar su certificado de alumno regular sea válido. Es por ello que aún no tendrá acceso a la aplicación." +
+                    " Nos comunicaremos con usted una vez que la verificación haya sido realizada. \n" +
+                    "            </p>\n" +
+                    "        <p><b>Atentamente,</b></p> \n" +
+                    "\n" +
+                    "        <p><b>Equipo de VetLens</b></p> \n" +
+                    "         </div> \n" +
+                    "    </body> \n" +
+                    "\n" +
+                    "\n" +
+                    "</html>");
+        }
+        else {
             emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
                     "<html>" +
                     "<body>" +
