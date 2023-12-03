@@ -15,8 +15,8 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class S3Service {
-    @Value("${aws.bucket.name}")
-    private String bucketName;
+
+    private final String bucketName = System.getenv("AWS_BUCKET_NAME");
     private final AmazonS3 s3Client;
 
     public String upload(String id, MultipartFile multipartFile ) {
