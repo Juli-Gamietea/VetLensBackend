@@ -6,6 +6,7 @@ import com.api.vetlens.dto.dog.DogResponseDTO;
 import com.api.vetlens.dto.user.UserRequestDTO;
 import com.api.vetlens.dto.user.UserResponseDTO;
 import com.api.vetlens.dto.user.UserUpdateRequestDTO;
+import com.api.vetlens.service.S3Service;
 import com.api.vetlens.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

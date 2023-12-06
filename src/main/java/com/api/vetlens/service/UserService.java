@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 @Slf4j
 @Service
@@ -35,7 +36,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DogRepository dogRepository;
     private final PasswordEncoder passwordEncoder;
-    private final CloudinaryService cloudinaryService;
+    private final S3Service s3Service;
     private final Faker faker;
     private final EmailService emailService;
     private ModelMapper mapper = new ModelMapper();
@@ -93,10 +94,15 @@ public class UserService {
         dog.setDateOfBirth(request.getDateOfBirth());
         dog.setCastrated(request.isCastrated());
         dog.setSex(Sex.valueOf(request.getSex()));
-        dog.setPhotoUrl("https://res.cloudinary.com/db3ti85we/image/upload/v1693880401/vetlens.png");
+        dog.setPhotoUrl("https://vetlens.s3.sa-east-1.amazonaws.com/vetlens.png");
         dog.setDeleted(false);
         log.info("Seteando información del perro y guardandolo en la base de datos");
         return mapper.map(dogRepository.save(dog), DogResponseDTO.class);
+    }
+
+    public MessageDTO uploadFile (MultipartFile multipartFile, String username) {
+        s3Service.upload("user-" + userRepository.findByUsername(username).get().getId() + "-file ID: (" + UUID.randomUUID() + ")", multipartFile);
+        return new MessageDTO("Se subió el archivo correctamente");
     }
 
     public DogResponseDTO updateDog(DogRequestDTO request) {
@@ -119,7 +125,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        String photoUrl = cloudinaryService.uploadDogPhoto(photo, dog.getName());
+        String photoUrl = s3Service.upload("profile-" + dog.getName(), photo);
         dog.setPhotoUrl(photoUrl);
         dogRepository.save(dog);
         return new MessageDTO(photoUrl);
@@ -131,7 +137,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        cloudinaryService.removeDogPhoto(dog.getName());
+        s3Service.removeDogPhoto(dog.getName());
         dog.setPhotoUrl(null);
         dogRepository.save(dog);
         return new MessageDTO("Foto eliminada");
@@ -143,7 +149,7 @@ public class UserService {
             throw new NotFoundException("El perro no existe");
         }
         Dog dog = dogOptional.get();
-        cloudinaryService.removeDogPhoto(dog.getName());
+        s3Service.removeDogPhoto(dog.getName());
         dog.setDeleted(true);
         dogRepository.save(dog);
         return new MessageDTO("Perro eliminado");
@@ -214,7 +220,40 @@ public class UserService {
                     "\n" +
                     "\n" +
                     "</html>");
-        } else {
+        } else if (role == Role.STUDENT) {
+            emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "<html>\n" +
+                    "\n" +
+                    "<body>\n" +
+                    "    <div>\n" +
+                    "        <h1 style=\"color: #00A6B0\">¡Bienvenido a VetLens!</h1>\n" +
+                    "        <h2>Su cuenta ha sido creada con exito</h2> \n" +
+                    "        <p> \n" +
+                    "            Le informamos que su cuenta fue creada exitosamente, sus credenciales son: \n" +
+                    "        </p> \n" +
+                    "        <ul> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Usuario</u>: " + user + "</p> \n" +
+                    "                </li> \n" +
+                    "            <li> \n" +
+                    "                <p><u>Contraseña</u>:  " + password +  "</p> \n" +
+                    "                </li>  \n" +
+                    "            </ul> \n" +
+                    "        </p> \n" +
+                    "         <br>  \n" +
+                    "        <p> \n" +
+                    "            Sin embargo, aún debemos verificar su certificado de alumno regular sea válido. Es por ello que aún no tendrá acceso a la aplicación." +
+                    " Nos comunicaremos con usted una vez que la verificación haya sido realizada. \n" +
+                    "            </p>\n" +
+                    "        <p><b>Atentamente,</b></p> \n" +
+                    "\n" +
+                    "        <p><b>Equipo de VetLens</b></p> \n" +
+                    "         </div> \n" +
+                    "    </body> \n" +
+                    "\n" +
+                    "\n" +
+                    "</html>");
+        }
+        else {
             emailService.sendEmail(email, "CUENTA CREADA CON EXITO", "" +
                     "<html>" +
                     "<body>" +

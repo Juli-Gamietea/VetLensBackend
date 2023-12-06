@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -106,5 +107,9 @@ public class AuthenticationController {
     @PutMapping("/password/restore/{username}")
     public ResponseEntity<MessageDTO> forgotPassword(@PathVariable String username) {
         return ResponseEntity.ok(userService.forgotPassword(username));
+    }
+    @PutMapping("/student/{username}/file")
+    public ResponseEntity<MessageDTO> addUserFile(@RequestPart(name = "file") MultipartFile file, @PathVariable String username) {
+        return ResponseEntity.ok(userService.uploadFile(file, username));
     }
 }

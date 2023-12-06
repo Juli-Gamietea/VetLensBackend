@@ -17,8 +17,7 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    @Value("${jwt.secret.key}")
-    private String secretKey;
+    private final String secretKey = System.getenv("JWT_SECRET_KEY");
     @Value("${jwt.token.expiration}")
     private long tokenExpiration;
     @Value("${jwt.refresh.token.expiration}")

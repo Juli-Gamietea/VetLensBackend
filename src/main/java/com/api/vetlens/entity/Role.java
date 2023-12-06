@@ -2,7 +2,8 @@ package com.api.vetlens.entity;
 
 public enum Role {
     VET("VET"),
-    DEFAULT("DEFAULT");
+    DEFAULT("DEFAULT"),
+    STUDENT("STUDENT");
 
     private String role;
 
