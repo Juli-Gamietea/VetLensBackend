@@ -11,19 +11,12 @@ Para poder utilizar la aplicación usted debe:
 1. Tener instalado Git, MySQL y Java 17
 2. Descargar el repositorio en la ruta en la que se encuentra en su dispositivo mediante 'git clone https://github.com/Juli-Gamietea/VetLensBackend.git'
 3. Asegurarse de encontrarse sobre la branch 'main' (con git checkout main en caso de no estarlo)
-4. Crear una base de datos en MySQL, por defecto el proyecto posee configurada la base de datos **_vetlens_** con user y password **_root_**, en
-caso de desear cambiarle la configuración debe dirigirse al archivo [application.properties](https://github.com/Juli-Gamietea/VetLensBackend/blob/main/src/main/resources/application.properties) y modificar las siguientes lineas:
-```
-spring.datasource.url=jdbc:mysql://localhost:3306/vetlens
-spring.datasource.username=root
-spring.datasource.password=root
-```
-5. Correr el archivo [VetlensApplication.java](https://github.com/Juli-Gamietea/VetLensBackend/blob/main/src/main/java/com/api/vetlens/VetlensApplication.java)
+4. Comunicarse con alguno de los contactos informados de modo que podamos cederle las credenciales necesarias que son solictadas vía variables de entorno ya que sin ellas la aplicación no podrá ejecutarse correctamente.
 
 > Los distintos endpoints de la aplicación se disponibilizarán en /swagger-ui.html. Por ejemplo si corre la aplicación en el puerto 8080 el link al Swagger será:
 > localhost:8080/swagger-ui.html
 
-6. Una vez que se encuentre levantada la aplicación, dirigirse a la base de datos creada y correr la siguiente query en ella (como notaremos, el booteo de la aplicación Java generó todas las tablas necesarias para el funcionamiento)
+5. Una vez que se encuentre levantada la aplicación, dirigirse a la base de datos creada y correr la siguiente query en ella (como notaremos, el booteo de la aplicación Java generó todas las tablas necesarias para el funcionamiento)
 
 ```
 USE vetlens;
